@@ -1,44 +1,102 @@
 import fetch from 'node-fetch';
-// import { cssGradient } from './utils/gradient.js';
-import { colorToRgba } from './utils/color.js';
 import * as fs from 'fs';
+import {
+  collectAlign,
+  collectBackground,
+  collectBorder,
+  collectColor,
+  collectPadding,
+  collectShadow,
+  collectTransition
+} from './utils/collect.js';
 
 // var fs = require('fs');
 
-const FIGMA_FILE = '';
+const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
 const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
-const POSITIONS = {
-  MAX: 'bottom',
-  CENTER: 'center',
+const STATES = ['hover', 'disabled', 'readonly'];
+
+const CONFIG = {
+  components: {
+    Buttons: {
+      exclude: ['width'],
+      children: {
+        spinner: {
+          variables: true,
+          include: ['border', 'width', 'height']
+        }
+      }
+    },
+  },
 }
 
 const FONT_STYLES_MAP = {
-  fontFamily: {
-    css: 'FontFamily'
+  'font-family': {
+    collector: (variant) => variant.style.fontFamily,
   },
-  lineHeightPx: {
-    css: 'LineHeight',
-    units: 'px'
+  'line-height': {
+    units: 'px',
+    collector: (variant) => variant.style.lineHeightPx,
   },
-  letterSpacing: {
-    css: 'LetterSpacing',
-    units: 'px'
+  'letter-spacing': {
+    units: 'px',
+    collector: (variant) => variant.style.letterSpacing,
   },
-  fontWeight: {
-    css: 'FontWeight',
-    units: 'px'
+  'font-size': {
+    units: 'px',
+    collector: (variant) => variant.style.fontSize,
   },
-  fontSize: {
-    css: 'FontSize',
-    units: 'px'
+  'font-weight': {
+    collector: (variant) => variant.style.fontWeight,
   },
+  'color': {
+    collector: collectColor,
+  }
 }
 
 const BASE_STYLES_MAP = {
-  strokeWeight: {
-    css: 'Border'
+  'width': {
+    units: 'px',
+    collector: (variant) => variant.absoluteBoundingBox.width,
+  },
+  'height': {
+    units: 'px',
+    collector: (variant) => variant.absoluteBoundingBox.height,
+  },
+  'padding': {
+    collector: collectPadding,
+  },
+  'border': {
+    collector: collectBorder,
+  },
+  'border-radius': {
+    units: 'px',
+    collector: (variant) => variant.cornerRadius || 0,
+  },
+  'background': {
+    collector: collectBackground,
+  },
+  'align-items': {
+    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'top'),
+  },
+  'justify-content': {
+    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'left'),
+  },
+  'gap': {
+    collector: (variant) => `${variant.itemSpacing || 0}px`,
+  },
+  'box-shadow': {
+    collector: collectShadow,
+  },
+  'transition': {
+    collector: collectTransition,
   }
+}
+
+const STYLES = {
+  ...BASE_STYLES_MAP,
+  ...FONT_STYLES_MAP,
 }
 
 async function fetchFigma(path) {
@@ -82,48 +140,10 @@ async function getFiles(path) {
   // Parsing components
   findComponents(components)
     .forEach(component => {
-      str += `// =============================================================
-// ${component.name}\n`;
-
       str = parseComponent(component, str);
     });
 
-  const cssFormat = `:root {
-${str}}`;
-
-  createCssFile(cssFormat);
-}
-
-function collectStyles(nodes) {
-  const stylesMap = {};
-
-  const styles = Object.values(nodes)
-    .map(x => x.document);
-
-  styles.sort(function(a, b) {
-    return (a.type < b.type) ? -1 : (a.type > b.type) ? 1 : 0;
-  });
-
-  styles.forEach(style => {
-    const modifier = style.name.replace('/', '');
-
-    stylesMap[style.id] = {};
-
-    if (style.type === 'RECTANGLE') {
-      stylesMap[style.id][modifier + 'Color'] = colorToRgba(style.fills[0].color);
-    }
-
-    if (style.type === 'TEXT') {
-      const fontStyles = Object.keys(style.style);
-      fontStyles.forEach(item => {
-        const cssPropName = FONT_STYLES_MAP[item];
-
-        if (cssPropName) {
-          stylesMap[style.id][modifier + cssPropName] = null;
-        }
-      });
-    }
-  });
+  createCssFile(str);
 }
 
 function findComponents(data, componentSets = []) {
@@ -140,21 +160,145 @@ function findComponents(data, componentSets = []) {
   return componentSets;
 }
 
-function parseComponent(component, str) {
+function parseComponent(component) {
+  const propsMap = [];
+  const modifiers = [];
+
   component.children.forEach(variant => {
-    const modifier = getModifier(component.name, variant);
-    const props = collectProperties(variant);
+    const modifier = getModifier(variant);
 
-    // TODO
-    str += createVariables(modifier, props);
+    // collectProperties(variant, propsMap, modifiers, modifier);
 
-    if (variant.children.length) {
-      str = parseComponentChildren(modifier, variant.children, str);
+    if (variant.children) {
+      variant.children.forEach(child => {
+        if (child.type !== 'TEXT' && child.name !== 'name') {
+          const childModifier = `${modifier} .${child.name}`;
+
+          collectProperties(child, propsMap, modifiers, childModifier, true);
+
+          console.log(propsMap);
+        }
+      });
+    }
+  });
+
+  const mixin = createMixin(parse(propsMap, component.name), component.name);
+
+  return mixin;
+}
+
+function createMixin(data, component) {
+  let result = '';
+  let baseStyles = '';
+
+  Object.keys(data).forEach(key => {
+    let props = '';
+    const propData = Object.entries(data[key]);
+
+    propData.forEach(([prop, value], index) => {
+      const postfix = propData.length !== index + 1 ? '\n' : '';
+      const spaces = key === '' ? '  ' : '    ';
+      const result = `${spaces}${prop}: ${value};${postfix}`;
+
+      if (key === '') {
+        baseStyles += result;
+      } else {
+        props += result;
+      }
+    });
+
+    const keyParts = key.split(',');
+    let keyString = '';
+
+    keyParts.forEach((part, index) => {
+      const spaces = '  ';
+      keyString += keyParts.length !== index + 1 ? `${spaces}&${part},\n` : `${spaces}&${part}`;
+    });
+
+
+    if (key !== '') {
+    result += `
+${keyString} {
+${props}
+  }\n`
     }
   });
 
 
-  return str;
+  return `@mixin ${component.toLowerCase()} {
+${baseStyles}
+${result}
+}`
+}
+
+function collectModifiersCount(modifier, result = {}) {
+  const parts = modifier.replace(/\s/g, '').split('.');
+
+  parts.forEach(part => {
+    if (!result[part]) {
+      result[part] = 1;
+    } else {
+      result[part] += 1;
+    }
+  });
+
+  return result;
+}
+
+function parse(props, component) {
+  const result = {};
+  let modifier = '';
+  let modCounts = {};
+  let value = null;
+  let count = 0;
+
+  Object.keys(STYLES)
+    .filter(key => {
+      // TODO new method filter
+      if (CONFIG.components[component].exclude) {
+        return !CONFIG.components[component].exclude.includes(key);
+      }
+
+      if (CONFIG.components[component].include) {
+        return CONFIG.components[component].include.includes(key);
+      }
+    })
+    .forEach(key => {
+
+      const sortedByProp = props.sort(function(a, b) {
+        return (a.values[key] < b.values[key]) ? -1 : (a.values[key] > b.values[key]) ? 1 : 0;
+      });
+
+      for (let i = 0; i < sortedByProp.length; i++) {
+        if (sortedByProp[i + 1]?.values[key] === sortedByProp[i]?.values[key]) {
+          count += 1;
+          const mod = sortedByProp[i].modifier;
+
+          value = sortedByProp[i].values[key];
+
+          if (value) {
+            modifier = modifier.length ? `${modifier},${mod}` : mod;
+          }
+        } else {
+          modifier = count === sortedByProp.length - 1 ? '' : modifier;
+
+          if (value) {
+            if (!result[modifier]) {
+              result[modifier] = {};
+            }
+
+            result[modifier][key] = value;
+          }
+
+          modifier = '';
+          count = 0;
+        }
+      }
+    });
+
+    // console.log(result);
+
+  return result;
 }
 
 function createCssFile(content) {
@@ -164,158 +308,64 @@ function createCssFile(content) {
   });
 }
 
-function createVariables(modifier, props, grouping = true) {
-  let str = grouping ? `// =============================================================
-// ${modifier}
-// =============================================================\n` : '';
-
-  Object.entries(props).forEach(([key, value]) => {
-    str += `--${modifier}${key}: "${value}";\n`;
-  });
-
-  return str;
-}
-
-function parseComponentChildren(modifier, children, str) {
-  children
-    .filter(child => child.type !== 'TEXT')
-    .forEach(child => {
-      const normalizedName = child.name.replace('$','');
-      const props = collectProperties(child);
-      const elementName = normalizedName[0].toUpperCase() + normalizedName.substring(1).toLowerCase();
-      const childModifier = `${modifier}${child.type === 'TEXT' ? '' : elementName}`;
-
-      str += createVariables(childModifier, props, child.type !== 'TEXT');
-    });
-
-  return str;
-}
-
-function getModifier(component, variant) {
+function getModifier(variant) {
   const variantModifiers = variant.name
+    .toLowerCase()
     .split(',')
     .map(modifier => modifier.split('='))
-    .filter(modifier => modifier[1] !== 'False')
+    .filter(modifier => modifier[1] !== 'false')
     .map(modifier => {
-      if (modifier[1] === 'True') {
-        return modifier[0];
+      const modNoSpaces = modifier[0].replace(/\s/g, '');
+      const prefix = STATES.includes(modNoSpaces) ? ':' : '.';
+
+      if (modifier[1] === 'true') {
+        return `${prefix}${modifier[0]}`;
       }
 
-      return modifier[1];
+      return `${prefix}${modifier[0]}-${modifier[1]}`;
     })
     .join('')
     .replace(/\s/g, '');
 
-  return component + variantModifiers;
+  return variantModifiers;
 }
 
-function collectProperties(variant) {
-  // Collecting font styles
-  let fontStyles = {};
-  if (variant.style) {
-    const styles = Object.keys(variant.style);
-    styles.forEach(item => {
-      const cssPropName = FONT_STYLES_MAP[item];
+function collectProperties(variant, propsMap, modifiers, modifier) {
+  const variantData = {
+    values: {},
+  };
 
-      if (cssPropName) {
-        const units = cssPropName.units ? cssPropName.units : '';
+  if (variant.children) {
+    variant.children.forEach(child => {
+      if (child.type === 'TEXT' && child.name === 'text') {
+        Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
+          const figmaValue = data.collector(child);
 
-        fontStyles[cssPropName.css] = `${variant.style[item]}${units}`;
+          if (figmaValue) {
+            const units = data.units ? data.units : '';
+
+            variantData.values[css] = `${figmaValue}${units}`;
+          }
+        });
       }
     });
   }
 
-  if (variant.type === 'TEXT') {
-    if (variant.fills && variant.fills.length) {
-      fontStyles.Color = colorToRgba(variant.fills[0].color);
+  Object.entries(BASE_STYLES_MAP).forEach(([css, data]) => {
+    const figmaValue = data.collector(variant);
+
+    if (figmaValue) {
+      const units = data.units ? data.units : '';
+
+      variantData.values[css] = `${figmaValue}${units}`;
     }
+  });
 
-    return fontStyles;
-  }
+  variantData.modifier = modifier;
 
-  // const styles = Object.keys(variant.style);
-  // styles.forEach(item => {
-  //   const cssPropName = FONT_STYLES_MAP[item];
-
-  //   if (cssPropName) {
-  //     const units = cssPropName.units ? cssPropName.units : '';
-
-  //     fontStyles[cssPropName.css] = `${variant.style[item]}${units}`;
-  //   }
-  // });
-
-  return {
-    Width: `${variant.absoluteBoundingBox.width}px`,
-    Height: `${variant.absoluteBoundingBox.height}px`,
-    Padding: collectPadding(variant),
-    Border: collectBorder(variant),
-    BorderRadius: `${variant.cornerRadius || 0}px`,
-    Background: collectBackground(variant),
-    Transition: collectTransition(variant),
-    AlignV: collectAlign(variant.counterAxisAlignItems, 'top'),
-    AlignH: collectAlign(variant.primaryAxisAlignItems, 'left'),
-    Spacing: `${variant.itemSpacing || 0}px`,
-    BoxShadow: collectShadow(variant),
-    ...fontStyles,
-  };
-}
-
-function collectBorder(variant) {
-  if (!variant.strokes.length) {
-    return 'none';
-  }
-
-  const color = colorToRgba(variant.strokes[0].color);
-  const type = variant.strokes[0].type.toLowerCase();
-
-  return `${variant.strokeWeight}px ${type} ${color}`;
-}
-
-function collectBackground(variant) {
-  if (variant.background && variant.background.length) {
-    const bg = variant.background[0];
-
-    if (bg.type === 'SOLID') {
-      return colorToRgba(bg.color);
-    } else {
-      // return cssGradient(bg);
-    }
-  }
-
-  return 'transparent';
-}
-
-function collectShadow(variant) {
-  if (!variant.effects.length) {
-    return 'none';
-  }
-
-  const shadow = variant.effects[0];
-  const type = shadow.type === 'INNER_SHADOW' ? 'inset' : '';
-
-  return `${shadow.offset.x}px ${shadow.offset.y}px ${shadow.radius}px ${type} ${colorToRgba(shadow.color)}`;
-}
-
-function collectPadding(variant) {
-  return `${variant.paddingTop || 0}px ${variant.paddingRight || 0}px ${variant.paddingBottom || 0}px ${variant.paddingLeft || 0}px`;
-}
-
-function collectTransition(variant) {
-  if (!variant.transitionDuration) {
-    return 'none';
-  }
-
-  return `all ${variant.transitionDuration}ms ${variant.transitionEasing.toLowerCase()}`;
-}
-
-function collectAlign(value, defaultValue) {
-  return POSITIONS[value] ? POSITIONS[value] : defaultValue;
+  modifiers.push(modifier);
+  propsMap.push(variantData);
 }
 
 // Getting all
-getFiles('https://api.figma.com/v1/files/o2EFM7hYM1rHlK4N7Kftdt');
-// Getting styles
-// getFiles('https://api.figma.com/v1/files/:key/nodes?ids=1:14');
-// getFiles('https://api.figma.com/v1/files/:key/nodes?ids=1:14')
-
-console.log('TEST');
+getFiles(`https://api.figma.com/v1/files/${FIGMA_FILE}`);
