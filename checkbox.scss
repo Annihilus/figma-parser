@@ -1,0 +1,79 @@
+// Checkbox // -----------------------------
+
+@mixin checkbox {
+  width: 20px;
+  height: 20px;
+  padding: 0px 0px 0px 0px;
+  border-radius: 2px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+
+  &.selected .icon,
+  &.mixed .element,
+  &:hover.mixed .element,
+  &:hover.selected .iw-icon {
+    color: rgba(0, 140, 70, 1);
+  }
+
+  &:disabled.selected .iw-icon,
+  &:disabled.mixed .element {
+    color: rgba(128, 197, 162, 1);
+  }
+
+  &.negative .iw-icon,
+  &:hover.negative .iw-icon {
+    color: rgba(207, 69, 52, 1);
+  }
+
+  &,
+  &.selected,
+  &.negative,
+  &:hover.negative,
+  &.mixed,
+  &:hover.mixed,
+  &:hover.selected {
+    border: 1px solid rgba(229, 229, 229, 1);
+  }
+
+  &:disabled,
+  &:disabled.selected,
+  &:disabled.mixed,
+  &.selected.negative {
+    border: 1px solid rgba(240, 240, 240, 1);
+  }
+
+  &:hover.mixed,
+  &:hover.selected {
+    background: rgba(238, 238, 238, 1);
+    color: rgba(238, 238, 238, 1);
+  }
+
+  &,
+  &.selected,
+  &.negative,
+  &:hover.negative,
+  &.mixed,
+  &:disabled,
+  &:disabled.selected,
+  &:disabled.mixed,
+  &.selected.negative {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  &:hover,
+  &:hover.mixed,
+  &:hover.selected,
+  &.selected,
+  &.negative,
+  &:hover.negative,
+  &.mixed,
+  &:disabled,
+  &:disabled.selected,
+  &:disabled.mixed,
+  &.selected.negative {
+    gap: 11px;
+  }
+
+}

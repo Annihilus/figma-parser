@@ -19,15 +19,30 @@ const STATES = ['hover', 'disabled', 'readonly'];
 
 const CONFIG = {
   components: {
-    Buttons: {
+    Button: {
       exclude: ['width'],
       children: {
         spinner: {
-          variables: true,
-          include: ['border', 'width', 'height']
+          include: ['width', 'height', 'color', 'padding'],
+          variables: {
+            color: ['type'],
+          },
+        },
+        icon: {
+          include: ['width', 'height', 'color'],
         }
       }
     },
+    Checkbox: {
+      children: {
+        icon: {
+          include: ['color'],
+        },
+        element: {
+          include: ['color'],
+        }
+      }
+    }
   },
 }
 
@@ -91,6 +106,9 @@ const BASE_STYLES_MAP = {
   },
   'transition': {
     collector: collectTransition,
+  },
+  'color': {
+    collector: collectColor,
   }
 }
 
@@ -129,21 +147,12 @@ async function getFiles(path) {
       components = data.document;
     });
 
-  // Collecting styles mixins
-  // await fetchFigma(stylesPath)
-  //   .then(styles => {
-  //     collectStyles(styles.nodes);
-  //   });
-
-  let str = '';
-
   // Parsing components
   findComponents(components)
     .forEach(component => {
-      str = parseComponent(component, str);
+      createCssFile(component.name, parseComponent(component));
     });
 
-  createCssFile(str);
 }
 
 function findComponents(data, componentSets = []) {
@@ -162,125 +171,103 @@ function findComponents(data, componentSets = []) {
 
 function parseComponent(component) {
   const propsMap = [];
-  const modifiers = [];
+  const children = [];
 
   component.children.forEach(variant => {
     const modifier = getModifier(variant);
 
-    // collectProperties(variant, propsMap, modifiers, modifier);
+    collectProperties(variant, propsMap, modifier, component.name);
 
     if (variant.children) {
       variant.children.forEach(child => {
+
         if (child.type !== 'TEXT' && child.name !== 'name') {
-          const childModifier = `${modifier} .${child.name}`;
+          const childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
+          const childModifier = `${modifier} .${childName}`;
 
-          collectProperties(child, propsMap, modifiers, childModifier, true);
-
-          console.log(propsMap);
+          collectProperties(child, children, childModifier, component.name, childName);
         }
       });
     }
   });
 
-  const mixin = createMixin(parse(propsMap, component.name), component.name);
+  const parsedChildren = parse(children);
+  const parsed = parse(propsMap);
+
+  console.log(parsedChildren);
+
+  const mixin = createMixin({...parsedChildren, ...parsed}, component.name);
 
   return mixin;
 }
 
-function createMixin(data, component) {
-  let result = '';
-  let baseStyles = '';
+function generateVariable(data, prop) {
+  const modifierParts = data.modifier.split('.');
+  let variable = '';
 
-  Object.keys(data).forEach(key => {
-    let props = '';
-    const propData = Object.entries(data[key]);
+  data.variables[prop].forEach(item => {
+    const part = modifierParts.find(i => i.startsWith(item));
 
-    propData.forEach(([prop, value], index) => {
-      const postfix = propData.length !== index + 1 ? '\n' : '';
-      const spaces = key === '' ? '  ' : '    ';
-      const result = `${spaces}${prop}: ${value};${postfix}`;
-
-      if (key === '') {
-        baseStyles += result;
-      } else {
-        props += result;
-      }
-    });
-
-    const keyParts = key.split(',');
-    let keyString = '';
-
-    keyParts.forEach((part, index) => {
-      const spaces = '  ';
-      keyString += keyParts.length !== index + 1 ? `${spaces}&${part},\n` : `${spaces}&${part}`;
-    });
-
-
-    if (key !== '') {
-    result += `
-${keyString} {
-${props}
-  }\n`
+    if (part.length) {
+      variable += variable.length ? `_${part}` : `$${part}`;
     }
   });
 
+  if (data.component) {
+    variable += `__${data.component}`;
+  }
 
-  return `@mixin ${component.toLowerCase()} {
-${baseStyles}
-${result}
-}`
+  return { [variable]: data.values[prop] };
 }
 
-function collectModifiersCount(modifier, result = {}) {
-  const parts = modifier.replace(/\s/g, '').split('.');
-
-  parts.forEach(part => {
-    if (!result[part]) {
-      result[part] = 1;
-    } else {
-      result[part] += 1;
-    }
-  });
-
-  return result;
-}
-
-function parse(props, component) {
-  const result = {};
-  let modifier = '';
-  let modCounts = {};
-  let value = null;
-  let count = 0;
+function parse(props) {
+  let result = {};
 
   Object.keys(STYLES)
-    .filter(key => {
-      // TODO new method filter
-      if (CONFIG.components[component].exclude) {
-        return !CONFIG.components[component].exclude.includes(key);
-      }
-
-      if (CONFIG.components[component].include) {
-        return CONFIG.components[component].include.includes(key);
-      }
-    })
     .forEach(key => {
+      const sortedByProp = props
+        .filter(item => item.values[key])
+        .sort(function(a, b) {
+          return (a.values[key] < b.values[key]) ? -1 : (a.values[key] > b.values[key]) ? 1 : 0;
+        });
 
-      const sortedByProp = props.sort(function(a, b) {
-        return (a.values[key] < b.values[key]) ? -1 : (a.values[key] > b.values[key]) ? 1 : 0;
-      });
+      let modifier = '';
+      let value = null;
+      let count = 0;
 
+      // TODO dont works with just one variant
       for (let i = 0; i < sortedByProp.length; i++) {
+        if (sortedByProp[i].variables && sortedByProp[i].variables[key]) {
+          const variable = generateVariable(sortedByProp[i], key);
+
+          result = { ...result, ...variable };
+
+          continue;
+        }
+
+        if (!modifier.length) {
+          modifier = sortedByProp[i].modifier;
+        }
+
+        // TODO add no value
         if (sortedByProp[i + 1]?.values[key] === sortedByProp[i]?.values[key]) {
           count += 1;
-          const mod = sortedByProp[i].modifier;
 
-          value = sortedByProp[i].values[key];
+          if (!value) {
+            value = sortedByProp[i].values[key];
+          }
 
-          if (value) {
-            modifier = modifier.length ? `${modifier},${mod}` : mod;
+          // If exists next item with same value, we extends out modifier by new modifier
+          if (sortedByProp[i + 1]?.modifier) {
+            modifier = `${modifier},${sortedByProp[i + 1].modifier}`;
           }
         } else {
-          modifier = count === sortedByProp.length - 1 ? '' : modifier;
+          // TODO this dont work properly
+          if (count === sortedByProp.length - 1) {
+            modifier =  sortedByProp[i].component ? `.${sortedByProp[i].component}` : '';
+          }
+
+          value = value || sortedByProp[i].values[key];
 
           if (value) {
             if (!result[modifier]) {
@@ -292,17 +279,16 @@ function parse(props, component) {
 
           modifier = '';
           count = 0;
+          value = null;
         }
       }
     });
 
-    // console.log(result);
-
   return result;
 }
 
-function createCssFile(content) {
-  fs.writeFile('figma-variables.scss', content, function (err) {
+function createCssFile(component, content) {
+  fs.writeFile(`${component.toLowerCase()}.scss`, content, function (err) {
     if (err) throw err;
     console.log('Variables scss file is created successfully.');
   });
@@ -330,42 +316,131 @@ function getModifier(variant) {
   return variantModifiers;
 }
 
-function collectProperties(variant, propsMap, modifiers, modifier) {
+function collectProperties(variant, propsMap, modifier, component, child = '') {
+  const childName = child.replace('$', '');
+  const configData = child && CONFIG.components[component]?.children ? CONFIG.components[component]?.children[childName] : CONFIG.components[component];
+
   const variantData = {
     values: {},
   };
 
-  if (variant.children) {
-    variant.children.forEach(child => {
-      if (child.type === 'TEXT' && child.name === 'text') {
-        Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
-          const figmaValue = data.collector(child);
+  Object.keys(BASE_STYLES_MAP)
+    .filter(key => {
+      if (!configData) {
+        return true;
+      }
 
-          if (figmaValue) {
-            const units = data.units ? data.units : '';
+      // TODO new method filter
+      if (configData.exclude) {
+        return !configData.exclude.includes(key);
+      }
 
-            variantData.values[css] = `${figmaValue}${units}`;
-          }
-        });
+      if (configData.include) {
+        return configData.include.includes(key);
+      }
+
+      return true;
+    })
+    .forEach((css) => {
+      const data = BASE_STYLES_MAP[css];
+      const iconInside = variant.children?.find(item => item.type === 'VECTOR');
+      let figmaValue = data.collector(variant);
+
+      if (css === 'color' && iconInside) {
+        figmaValue = data.collector(iconInside);
+      }
+
+      if (figmaValue) {
+        const units = data.units ? data.units : '';
+
+        variantData.values[css] = `${figmaValue}${units}`;
+      }
+    });
+
+  const textChild = variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
+
+  if (textChild) {
+    Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
+      const figmaValue = data.collector(textChild);
+
+      if (figmaValue) {
+        const units = data.units ? data.units : '';
+
+        variantData.values[css] = `${figmaValue}${units}`;
       }
     });
   }
 
-  Object.entries(BASE_STYLES_MAP).forEach(([css, data]) => {
-    const figmaValue = data.collector(variant);
-
-    if (figmaValue) {
-      const units = data.units ? data.units : '';
-
-      variantData.values[css] = `${figmaValue}${units}`;
-    }
-  });
-
   variantData.modifier = modifier;
 
-  modifiers.push(modifier);
+  if (configData && configData.variables) {
+    variantData.variables = configData.variables;
+  }
+
+  if (child) {
+    variantData.component = child;
+  }
+
   propsMap.push(variantData);
 }
 
 // Getting all
 getFiles(`https://api.figma.com/v1/files/${FIGMA_FILE}`);
+
+function createMixin(data, component) {
+  let result = '';
+  let baseStyles = '';
+  let variables = '';
+
+  Object.keys(data).forEach(key => {
+    if (key.startsWith('$')) {
+      variables += `${key}: ${data[key]};\n`;
+
+      return;
+    }
+
+    let props = '';
+    const propData = Object.entries(data[key]);
+
+    propData.forEach(([prop, value], index) => {
+      const postfix = propData.length !== index + 1 ? '\n' : '';
+      const spaces = key === '' ? '  ' : '    ';
+      const result = `${spaces}${prop}: ${value};${postfix}`;
+
+      if (key === '') {
+        baseStyles += result;
+      } else {
+        props += result;
+      }
+    });
+
+    const keyParts = key.split(',');
+    let keyString = '';
+
+    keyParts.forEach((part, index) => {
+      const spaces = '  ';
+
+      console.log(part);
+      part = part.startsWith('$') ? `.${part}` : `&${part}`;
+      part = part.replace('$', 'iw-');
+
+
+      keyString += keyParts.length !== index + 1 ? `${spaces}${part},\n` : `${spaces}${part}`;
+    });
+
+
+    if (key !== '') {
+    result += `
+${keyString} {
+${props}
+  }\n`
+    }
+  });
+
+  return `// ${component} // -----------------------------
+${variables}
+@mixin ${component.toLowerCase()} {
+${baseStyles}
+${result}
+}`
+}

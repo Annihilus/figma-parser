@@ -31,13 +31,23 @@ export function collectBackground(variant) {
 }
 
 export function collectColor(variant) {
+  // const icon = variant.children?.find(i => i.type === 'INSTANCE' && i.name.startsWith('$icon'));
+
+  // if (icon) {
+  //   const color = icon.children[0].fills[0].color;
+
+  //   return colorToRgba(color);
+  // }
+
+
+
   if (variant.fills && variant.fills.length) {
     const color = variant.fills[0].color;
 
     return colorToRgba(color);
   }
 
-  return 'transparent';
+  return null;
 }
 
 export function collectShadow(variant) {
@@ -57,10 +67,10 @@ export function collectPadding(variant) {
 
 export function collectTransition(variant) {
   if (!variant.transitionDuration) {
-    return 'none';
+    return null;
   }
 
-  return `all ${variant.transitionDuration}ms ${variant.transitionEasing.toLowerCase()}`;
+  return `all ${variant.transitionDuration}ms ${variant.transitionEasing.toLowerCase().replace('_', '-')}`;
 }
 
 export function collectAlign(value, defaultValue) {
