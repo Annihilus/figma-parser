@@ -33,6 +33,9 @@ const CONFIG = {
         }
       }
     },
+    Input: {
+      exclude: ['width'],
+    },
     Checkbox: {
       children: {
         icon: {
@@ -175,15 +178,20 @@ function parseComponent(component) {
 
   component.children.forEach(variant => {
     const modifier = getModifier(variant);
+    console.log(modifier);
 
     collectProperties(variant, propsMap, modifier, component.name);
 
     if (variant.children) {
       variant.children.forEach(child => {
 
-        if (child.type !== 'TEXT' && child.name !== 'name') {
+        if (child.name !== 'text') {
           const childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
-          const childModifier = `${modifier} .${childName}`;
+          let childModifier = modifier.length ? `${modifier} .${childName}` : `.${childName}`;
+
+          if (childName === 'placeholder') {
+            childModifier = '::placeholder';
+          }
 
           collectProperties(child, children, childModifier, component.name, childName);
         }
@@ -193,8 +201,6 @@ function parseComponent(component) {
 
   const parsedChildren = parse(children);
   const parsed = parse(propsMap);
-
-  console.log(parsedChildren);
 
   const mixin = createMixin({...parsedChildren, ...parsed}, component.name);
 
@@ -299,7 +305,9 @@ function getModifier(variant) {
     .toLowerCase()
     .split(',')
     .map(modifier => modifier.split('='))
-    .filter(modifier => modifier[1] !== 'false')
+    .filter(modifier => {
+      return modifier[1] !== 'false' && modifier[0].replace(/\s/g, "") !== 'placeholder'
+    })
     .map(modifier => {
       const modNoSpaces = modifier[0].replace(/\s/g, '');
       const prefix = STATES.includes(modNoSpaces) ? ':' : '.';
@@ -313,7 +321,11 @@ function getModifier(variant) {
     .join('')
     .replace(/\s/g, '');
 
-  return variantModifiers;
+  if (!variantModifiers.length) {
+    return '';
+  }
+
+  return `&${variantModifiers}`;
 }
 
 function collectProperties(variant, propsMap, modifier, component, child = '') {
@@ -371,6 +383,12 @@ function collectProperties(variant, propsMap, modifier, component, child = '') {
     });
   }
 
+  if (modifier === '') {
+    console.log('EMPTY')
+  }
+
+  console.log(modifier);
+
   variantData.modifier = modifier;
 
   if (configData && configData.variables) {
@@ -420,8 +438,7 @@ function createMixin(data, component) {
     keyParts.forEach((part, index) => {
       const spaces = '  ';
 
-      console.log(part);
-      part = part.startsWith('$') ? `.${part}` : `&${part}`;
+      part = part.startsWith('$') ? `.${part}` : part;
       part = part.replace('$', 'iw-');
 
 
