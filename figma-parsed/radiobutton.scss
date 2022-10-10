@@ -1,0 +1,60 @@
+// Radiobutton // -----------------------------
+
+@mixin radiobutton {
+  width: 17px;
+  height: 17px;
+  padding: 0px 0px 0px 0px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  box-shadow: none;
+
+  .indicator {
+    width: 9px;
+    height: 9px;
+    padding: 0px 0px 0px 0px;
+    border: none;
+    border-radius: 50px;
+    align-items: top;
+    justify-content: left;
+    gap: 0px;
+    box-shadow: none;
+  }
+
+  &.selected .indicator,
+  &:hover.selected .indicator {
+    background: rgba(0, 140, 70, 1);
+    color: rgba(0, 140, 70, 1);
+  }
+
+  &:disabled.selected .indicator {
+    background: rgba(128, 197, 162, 1);
+    color: rgba(128, 197, 162, 1);
+  }
+
+  &.selected,
+  &:hover.selected,
+  &:hover {
+    border: 1px solid rgba(229, 229, 229, 1);
+  }
+
+  &:disabled,
+  &:disabled.selected {
+    border: 1px solid rgba(240, 240, 240, 1);
+  }
+
+  &:hover.selected,
+  &:hover {
+    background: rgba(238, 238, 238, 1);
+    color: rgba(238, 238, 238, 1);
+  }
+
+  &.selected,
+  &:disabled,
+  &:disabled.selected {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+}

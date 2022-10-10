@@ -1,0 +1,158 @@
+// Input // -----------------------------
+
+@mixin input {
+  width: 350px;
+  height: 36px;
+  padding: 6px 8px 6px 8px;
+  border-radius: 2px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: none;
+
+  &.leadingicon .platformKey,
+  &.trailingicon .platformEye,
+  &.leadingicon.trailingicon .platformKey,
+  &.leadingicon.trailingicon .platformEye,
+  &.leadingicon:disabled .platformKey,
+  &.trailingicon:disabled .platformEye,
+  &.leadingicon.trailingicon:disabled .platformKey,
+  &.leadingicon.trailingicon:disabled .platformEye,
+  &.leadingicon:hover .platformKey,
+  &.trailingicon:hover .platformEye,
+  &.leadingicon.trailingicon:hover .platformKey,
+  &.leadingicon.trailingicon:hover .platformEye {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.leadingicon.trailingicon input,
+  &.leadingicon.trailingicon:disabled input,
+  &.leadingicon.trailingicon:hover input {
+    width: 274px;
+  }
+
+  &.leadingicon input,
+  &.trailingicon input,
+  &.leadingicon:disabled input,
+  &.trailingicon:disabled input,
+  &.leadingicon:hover input,
+  &.trailingicon:hover input {
+    width: 304px;
+  }
+
+  input,
+  &:disabled input,
+  &:hover input {
+    width: 334px;
+  }
+
+  input,
+  &.leadingicon input,
+  &.trailingicon input,
+  &.leadingicon.trailingicon input,
+  &:disabled input,
+  &.leadingicon:disabled input,
+  &.trailingicon:disabled input,
+  &.leadingicon.trailingicon:disabled input,
+  &:hover input,
+  &.leadingicon:hover input,
+  &.trailingicon:hover input,
+  &.leadingicon.trailingicon:hover input {
+    height: 24px;
+    color: rgba(51, 51, 51, 1);
+  }
+
+  input {
+    padding: 0px 0px 0px 0px;
+    border: none;
+    background: transparent;
+    align-items: top;
+    justify-content: left;
+    gap: 0px;
+    box-shadow: none;
+    font-family: Roboto;
+    line-height: 22px;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  &.leadingicon .platformKey,
+  &.trailingicon .platformEye,
+  &.leadingicon.trailingicon .platformKey,
+  &.leadingicon.trailingicon .platformEye,
+  &.leadingicon:hover .platformKey,
+  &.trailingicon:hover .platformEye,
+  &.leadingicon.trailingicon:hover .platformKey,
+  &.leadingicon.trailingicon:hover .platformEye {
+    color: rgba(128, 128, 128, 1);
+  }
+
+  input::placeholder,
+  &.leadingicon input::placeholder,
+  &.trailingicon input::placeholder,
+  &.leadingicon.trailingicon input::placeholder,
+  &:hover input::placeholder,
+  &.leadingicon:hover input::placeholder,
+  &.trailingicon:hover input::placeholder,
+  &.leadingicon.trailingicon:hover input::placeholder {
+    color: rgba(132, 132, 132, 1);
+  }
+
+  &:disabled input::placeholder,
+  &.leadingicon:disabled .platformKey,
+  &.leadingicon:disabled input::placeholder,
+  &.trailingicon:disabled input::placeholder,
+  &.trailingicon:disabled .platformEye,
+  &.leadingicon.trailingicon:disabled .platformKey,
+  &.leadingicon.trailingicon:disabled input::placeholder,
+  &.leadingicon.trailingicon:disabled .platformEye {
+    color: rgba(204, 204, 204, 1);
+  }
+
+  &:hover,
+  &.leadingicon:hover,
+  &.trailingicon:hover,
+  &.leadingicon.trailingicon:hover {
+    border: 1px solid rgba(0, 125, 50, 1);
+    color: rgba(51, 51, 51, 1);
+  }
+
+  &,
+  &.leadingicon,
+  &.trailingicon,
+  &.leadingicon.trailingicon,
+  &:disabled,
+  &.leadingicon:disabled,
+  &.trailingicon:disabled,
+  &.leadingicon.trailingicon:disabled {
+    border: none;
+  }
+
+  &,
+  &.leadingicon,
+  &.trailingicon,
+  &.leadingicon.trailingicon,
+  &:hover,
+  &.leadingicon:hover,
+  &.trailingicon:hover,
+  &.leadingicon.trailingicon:hover {
+    background: rgba(238, 238, 238, 1);
+  }
+
+  &:disabled,
+  &.leadingicon:disabled,
+  &.trailingicon:disabled,
+  &.leadingicon.trailingicon:disabled {
+    background: rgba(240, 240, 240, 1);
+    color: rgba(190, 190, 190, 1);
+  }
+
+  &,
+  &.leadingicon,
+  &.trailingicon,
+  &.leadingicon.trailingicon {
+    color: rgba(132, 132, 132, 1);
+  }
+
+}

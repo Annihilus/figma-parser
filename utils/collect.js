@@ -17,8 +17,8 @@ export function collectBorder(variant) {
 }
 
 export function collectBackground(variant) {
-  if (variant.background && variant.background.length) {
-    const bg = variant.background[0];
+  if (variant.fills && variant.fills.length) {
+    const bg = variant.fills[0];
 
     if (bg.type === 'SOLID') {
       return colorToRgba(bg.color);
@@ -31,16 +31,6 @@ export function collectBackground(variant) {
 }
 
 export function collectColor(variant) {
-  // const icon = variant.children?.find(i => i.type === 'INSTANCE' && i.name.startsWith('$icon'));
-
-  // if (icon) {
-  //   const color = icon.children[0].fills[0].color;
-
-  //   return colorToRgba(color);
-  // }
-
-
-
   if (variant.fills && variant.fills.length) {
     const color = variant.fills[0].color;
 
@@ -74,5 +64,6 @@ export function collectTransition(variant) {
 }
 
 export function collectAlign(value, defaultValue) {
+  // console.log(POSITIONS[value], value, defaultValue);
   return POSITIONS[value] ? POSITIONS[value] : defaultValue;
 }

@@ -10,12 +10,13 @@ import {
   collectTransition
 } from './utils/collect.js';
 
-// var fs = require('fs');
-
 const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
 const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
 const STATES = ['hover', 'disabled', 'readonly'];
+
+const HTML_ELEMENTS = ['input'];
+const HTML_SUBELEMENTS = ['placeholder'];
 
 const CONFIG = {
   components: {
@@ -34,9 +35,27 @@ const CONFIG = {
       }
     },
     Input: {
-      exclude: ['width'],
+      // exclude: ['width'],
+      children: {
+        element: {
+          exclude: ['width'],
+        },
+        placeholder: {
+          include: ['color'],
+        },
+        platformEye: {
+          include: ['width', 'height', 'color'],
+        },
+        platformCross: {
+          include: ['width', 'height', 'color'],
+        },
+        platformKey: {
+          include: ['width', 'height', 'color'],
+        },
+      },
     },
     Checkbox: {
+      statesAsClass: ['disabled', 'readonly'],
       children: {
         icon: {
           include: ['color'],
@@ -172,30 +191,45 @@ function findComponents(data, componentSets = []) {
   return componentSets;
 }
 
+function collectChild(variant, children, modifier, component) {
+  variant.children.forEach(child => {
+    if (child.name !== 'text' && child.visible !== false) {
+      let childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
+      const isHtmlElement = HTML_ELEMENTS.includes(childName);
+      let prefix = !isHtmlElement ? ' .' : ' ';
+
+      // If child is an icon
+      if (child.type === 'VECTOR') {
+        prefix = '';
+        childName = '';
+      }
+
+      let childModifier = modifier.length ? `${modifier}${prefix}${childName}` : childName;
+
+      if (HTML_SUBELEMENTS.includes(childName)) {
+        childModifier = `${modifier}::placeholder`;
+      }
+
+      collectProperties(child, children, childModifier, component, childName);
+
+      if (child.children) {
+        collectChild(child, children, childModifier, component);
+      }
+    }
+  });
+}
+
 function parseComponent(component) {
   const propsMap = [];
   const children = [];
 
   component.children.forEach(variant => {
-    const modifier = getModifier(variant);
-    console.log(modifier);
+    const modifier = getModifier(variant, component.name);
 
     collectProperties(variant, propsMap, modifier, component.name);
 
     if (variant.children) {
-      variant.children.forEach(child => {
-
-        if (child.name !== 'text') {
-          const childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
-          let childModifier = modifier.length ? `${modifier} .${childName}` : `.${childName}`;
-
-          if (childName === 'placeholder') {
-            childModifier = '::placeholder';
-          }
-
-          collectProperties(child, children, childModifier, component.name, childName);
-        }
-      });
+      collectChild(variant, children, modifier, component.name);
     }
   });
 
@@ -212,7 +246,7 @@ function generateVariable(data, prop) {
   let variable = '';
 
   data.variables[prop].forEach(item => {
-    const part = modifierParts.find(i => i.startsWith(item));
+    const part = modifierParts.find(i => i.startsWith(item.toLowerCase()));
 
     if (part.length) {
       variable += variable.length ? `_${part}` : `$${part}`;
@@ -265,12 +299,34 @@ function parse(props) {
 
           // If exists next item with same value, we extends out modifier by new modifier
           if (sortedByProp[i + 1]?.modifier) {
-            modifier = `${modifier},${sortedByProp[i + 1].modifier}`;
+            console.log(modifier);
+
+            if (!modifier.length) {
+              if (!result[modifier]) {
+                result[modifier] = {};
+              }
+
+              console.log(result[modifier][key], value);
+
+              result[modifier][key] = value;
+            }
+            const prevModifier = modifier.length ? `${modifier},` : modifier;
+            modifier = `${prevModifier}${sortedByProp[i + 1].modifier}`;
           }
         } else {
           // TODO this dont work properly
           if (count === sortedByProp.length - 1) {
-            modifier =  sortedByProp[i].component ? `.${sortedByProp[i].component}` : '';
+            const component = sortedByProp[i].component;
+            const htmlElement = sortedByProp[i].element;
+
+            if (component) {
+              const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
+              modifier = componentSelector;
+            } else if (htmlElement) {
+              modifier = htmlElement;
+            } else {
+              modifier = '';
+            }
           }
 
           value = value || sortedByProp[i].values[key];
@@ -290,33 +346,40 @@ function parse(props) {
       }
     });
 
+
   return result;
 }
 
 function createCssFile(component, content) {
-  fs.writeFile(`${component.toLowerCase()}.scss`, content, function (err) {
+  fs.writeFile(`./figma-parsed/${component.toLowerCase()}.scss`, content, function (err) {
     if (err) throw err;
     console.log('Variables scss file is created successfully.');
   });
 }
 
-function getModifier(variant) {
+function getModifier(variant, component) {
   const variantModifiers = variant.name
-    .toLowerCase()
     .split(',')
     .map(modifier => modifier.split('='))
+    .map(modifier => [modifier[0].replace(/\s/g, ''), modifier[1]])
     .filter(modifier => {
-      return modifier[1] !== 'false' && modifier[0].replace(/\s/g, "") !== 'placeholder'
+      return modifier[1].toLowerCase() !== 'false' && modifier[0].toLowerCase() !== 'placeholder'
     })
     .map(modifier => {
-      const modNoSpaces = modifier[0].replace(/\s/g, '');
-      const prefix = STATES.includes(modNoSpaces) ? ':' : '.';
+      const statesAsClass = CONFIG?.components[component]?.statesAsClass;
+      const modName = lowerCaseFirstLetter(modifier[0]);
+      const modValue = lowerCaseFirstLetter(modifier[1]);
+      let prefix = STATES.includes(modName) ? ':' : '.';
 
-      if (modifier[1] === 'true') {
-        return `${prefix}${modifier[0]}`;
+      if (statesAsClass?.includes(modName)) {
+        prefix = '.';
       }
 
-      return `${prefix}${modifier[0]}-${modifier[1]}`;
+      if (modifier[1].toLowerCase() === 'true') {
+        return `${prefix}${modName}`;
+      }
+
+      return `${prefix}${modName}-${modValue}`;
     })
     .join('')
     .replace(/\s/g, '');
@@ -383,23 +446,28 @@ function collectProperties(variant, propsMap, modifier, component, child = '') {
     });
   }
 
-  if (modifier === '') {
-    console.log('EMPTY')
+  const exists = propsMap.find(item => item.modifier === modifier);
+
+  if (!exists) {
+    variantData.modifier = modifier;
+
+    if (configData && configData.variables) {
+      variantData.variables = configData.variables;
+    }
+
+    const isHtmlElement = HTML_ELEMENTS.includes(child);
+
+    if (child && !isHtmlElement) {
+      variantData.component = child;
+    }
+
+    if (isHtmlElement) {
+      variantData.element = child;
+    }
+
+    propsMap.push(variantData);
   }
 
-  console.log(modifier);
-
-  variantData.modifier = modifier;
-
-  if (configData && configData.variables) {
-    variantData.variables = configData.variables;
-  }
-
-  if (child) {
-    variantData.component = child;
-  }
-
-  propsMap.push(variantData);
 }
 
 // Getting all
@@ -460,4 +528,8 @@ ${variables}
 ${baseStyles}
 ${result}
 }`
+}
+
+function lowerCaseFirstLetter(string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
 }
