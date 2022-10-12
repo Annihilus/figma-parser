@@ -1,0 +1,52 @@
+// Label // -----------------------------
+
+@mixin label {
+  padding: 0px 0px 0px 0px;
+  border: none;
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  box-shadow: none;
+  flex-direction: row;
+  font-family: Roboto;
+  line-height: 18px;
+  font-size: 15px;
+  font-weight: 400;
+
+  .required {
+    border: none;
+    align-items: top;
+    justify-content: left;
+    gap: 0px;
+    box-shadow: none;
+  }
+
+  &.type-required.status-default .required {
+    color: rgba(0, 0, 0, 1);
+  }
+
+  &.type-required.status-disabled .required {
+    color: rgba(204, 204, 204, 1);
+  }
+
+  &.type-required.status-error .required {
+    color: rgba(207, 69, 52, 1);
+  }
+
+  &.type-required.status-default,
+  &.type-default.status-default {
+    color: rgba(0, 0, 0, 1);
+  }
+
+  &.type-required.status-disabled,
+  &.type-default.status-disabled {
+    color: rgba(204, 204, 204, 1);
+  }
+
+  &.type-required.status-error,
+  &.type-default.status-error {
+    color: rgba(207, 69, 52, 1);
+  }
+
+}

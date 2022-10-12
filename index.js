@@ -4,10 +4,14 @@ import {
   collectAlign,
   collectBackground,
   collectBorder,
+  collectBorderRadius,
   collectColor,
   collectPadding,
   collectShadow,
-  collectTransition
+  collectTransition,
+  collectDirection,
+  collectWidth,
+  collectHeight,
 } from './utils/collect.js';
 
 const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
@@ -34,10 +38,49 @@ const CONFIG = {
         }
       }
     },
-    Input: {
-      // exclude: ['width'],
+    ButtonToggle: {
+      exclude: ['width', 'height'],
       children: {
-        element: {
+        ignore: true,
+      }
+    },
+    Label: {
+      exclude: ['width', 'height'],
+      children: {
+        required: {
+          exclude: ['width', 'height', 'padding', 'background'],
+        },
+      },
+    },
+    Radiobutton: {
+      statesAsClass: ['disabled'],
+      children: {
+        icon: {
+          include: ['width', 'height', 'color'],
+        }
+      }
+    },
+    RadiobuttonGroup: {
+      exclude: ['width', 'height'],
+      children: {
+        Radiobutton: {
+          ignore: true,
+        },
+        RadiobuttonLabel: {
+          ignore: true,
+        }
+      }
+    },
+    RadiobuttonLabel: {
+      exclude: ['width', 'height'],
+      children: {
+         ignore: true,
+      }
+    },
+    Input: {
+      exclude: ['width'],
+      children: {
+        input: {
           exclude: ['width'],
         },
         placeholder: {
@@ -64,7 +107,31 @@ const CONFIG = {
           include: ['color'],
         }
       }
-    }
+    },
+    CheckboxLabel: {
+      exclude: ['width', 'height'],
+      children: {
+        ignore: true,
+      }
+    },
+    CheckboxGroup: {
+      exclude: ['width', 'height'],
+      children: {
+        ignore: true,
+      },
+    },
+    Popover: {
+      exclude: ['width', 'height'],
+    },
+    HintedElement: {
+      exclude: ['width', 'height'],
+      children: {
+        ignore: true,
+      }
+    },
+    HelperText: {
+      // exclude: ['width', 'height'],
+    },
   },
 }
 
@@ -94,12 +161,10 @@ const FONT_STYLES_MAP = {
 
 const BASE_STYLES_MAP = {
   'width': {
-    units: 'px',
-    collector: (variant) => variant.absoluteBoundingBox.width,
+    collector: collectWidth,
   },
   'height': {
-    units: 'px',
-    collector: (variant) => variant.absoluteBoundingBox.height,
+    collector: collectHeight,
   },
   'padding': {
     collector: collectPadding,
@@ -108,17 +173,16 @@ const BASE_STYLES_MAP = {
     collector: collectBorder,
   },
   'border-radius': {
-    units: 'px',
-    collector: (variant) => variant.cornerRadius || 0,
+    collector: collectBorderRadius,
   },
   'background': {
     collector: collectBackground,
   },
   'align-items': {
-    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'top'),
+    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'vertical'),
   },
   'justify-content': {
-    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'left'),
+    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'horizontal'),
   },
   'gap': {
     collector: (variant) => `${variant.itemSpacing || 0}px`,
@@ -131,7 +195,10 @@ const BASE_STYLES_MAP = {
   },
   'color': {
     collector: collectColor,
-  }
+  },
+  'flex-direction': {
+    collector: (variant) => collectDirection(variant),
+  },
 }
 
 const STYLES = {
@@ -192,31 +259,33 @@ function findComponents(data, componentSets = []) {
 }
 
 function collectChild(variant, children, modifier, component) {
-  variant.children.forEach(child => {
-    if (child.name !== 'text' && child.visible !== false) {
-      let childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
-      const isHtmlElement = HTML_ELEMENTS.includes(childName);
-      let prefix = !isHtmlElement ? ' .' : ' ';
+  variant.children
+    .filter(child => !CONFIG.components[component]?.children || !CONFIG.components[component]?.children[child.name]?.ignore)
+    .forEach(child => {
+      if (child.name !== 'text' && child.visible !== false) {
+        let childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
+        const isHtmlElement = HTML_ELEMENTS.includes(childName);
+        let prefix = !isHtmlElement ? ' .' : ' ';
 
-      // If child is an icon
-      if (child.type === 'VECTOR') {
-        prefix = '';
-        childName = '';
+        // If child is an icon
+        if (child.type === 'VECTOR' || child.name.toUpperCase() === 'VECTOR') {
+          prefix = '';
+          childName = '';
+        }
+
+        let childModifier = modifier.length ? `${modifier}${prefix}${childName}` : childName;
+
+        if (HTML_SUBELEMENTS.includes(childName)) {
+          childModifier = `${modifier}::placeholder`;
+        }
+
+        collectProperties(child, children, childModifier, component, childName);
+
+        if (child.children) {
+          collectChild(child, children, childModifier, component);
+        }
       }
-
-      let childModifier = modifier.length ? `${modifier}${prefix}${childName}` : childName;
-
-      if (HTML_SUBELEMENTS.includes(childName)) {
-        childModifier = `${modifier}::placeholder`;
-      }
-
-      collectProperties(child, children, childModifier, component, childName);
-
-      if (child.children) {
-        collectChild(child, children, childModifier, component);
-      }
-    }
-  });
+    });
 }
 
 function parseComponent(component) {
@@ -228,7 +297,9 @@ function parseComponent(component) {
 
     collectProperties(variant, propsMap, modifier, component.name);
 
-    if (variant.children) {
+    const ignore = CONFIG.components[component.name] && CONFIG.components[component.name].children?.ignore;
+
+    if (variant.children && !ignore) {
       collectChild(variant, children, modifier, component.name);
     }
   });
@@ -275,77 +346,81 @@ function parse(props) {
       let value = null;
       let count = 0;
 
-      // TODO dont works with just one variant
-      for (let i = 0; i < sortedByProp.length; i++) {
-        if (sortedByProp[i].variables && sortedByProp[i].variables[key]) {
-          const variable = generateVariable(sortedByProp[i], key);
-
-          result = { ...result, ...variable };
-
-          continue;
+      if (sortedByProp.length === 1) {
+        if (!result[modifier]) {
+          result[modifier] = {}
         }
+        result[modifier][key] = sortedByProp[0].values[key];
+      } else {
+        for (let i = 0; i < sortedByProp.length; i++) {
+          if (sortedByProp[i].variables && sortedByProp[i].variables[key]) {
+            const variable = generateVariable(sortedByProp[i], key);
 
-        if (!modifier.length) {
-          modifier = sortedByProp[i].modifier;
-        }
+            result = { ...result, ...variable };
 
-        // TODO add no value
-        if (sortedByProp[i + 1]?.values[key] === sortedByProp[i]?.values[key]) {
-          count += 1;
-
-          if (!value) {
-            value = sortedByProp[i].values[key];
+            continue;
           }
 
-          // If exists next item with same value, we extends out modifier by new modifier
-          if (sortedByProp[i + 1]?.modifier) {
-            console.log(modifier);
+          if (!modifier.length) {
+            modifier = sortedByProp[i].modifier;
+          }
 
-            if (!modifier.length) {
+          // TODO add no value
+          if (sortedByProp[i + 1]?.values[key] === sortedByProp[i]?.values[key]) {
+            count += 1;
+
+            if (!value) {
+              value = sortedByProp[i].values[key];
+            }
+
+            // If exists next item with same value, we extends out modifier by new modifier
+            if (sortedByProp[i + 1]?.modifier) {
+              if (!modifier.length) {
+                if (!result[modifier]) {
+                  result[modifier] = {};
+                }
+
+                result[modifier][key] = value;
+              }
+
+              const prevModifier = modifier.length ? `${modifier},` : modifier;
+              modifier = `${prevModifier}${sortedByProp[i + 1].modifier}`;
+            } else {
+              modifier = `&,${modifier}`;
+            }
+          } else {
+            // TODO this dont work properly
+            if (count === sortedByProp.length - 1) {
+              const component = sortedByProp[i].component;
+              const htmlElement = sortedByProp[i].element;
+
+              if (component) {
+                const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
+                modifier = componentSelector;
+              } else if (htmlElement) {
+                modifier = htmlElement;
+              } else {
+                modifier = '';
+              }
+            }
+
+            value = value || sortedByProp[i].values[key];
+
+            if (value) {
               if (!result[modifier]) {
                 result[modifier] = {};
               }
 
-              console.log(result[modifier][key], value);
-
               result[modifier][key] = value;
             }
-            const prevModifier = modifier.length ? `${modifier},` : modifier;
-            modifier = `${prevModifier}${sortedByProp[i + 1].modifier}`;
+
+            modifier = '';
+            count = 0;
+            value = null;
           }
-        } else {
-          // TODO this dont work properly
-          if (count === sortedByProp.length - 1) {
-            const component = sortedByProp[i].component;
-            const htmlElement = sortedByProp[i].element;
-
-            if (component) {
-              const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
-              modifier = componentSelector;
-            } else if (htmlElement) {
-              modifier = htmlElement;
-            } else {
-              modifier = '';
-            }
-          }
-
-          value = value || sortedByProp[i].values[key];
-
-          if (value) {
-            if (!result[modifier]) {
-              result[modifier] = {};
-            }
-
-            result[modifier][key] = value;
-          }
-
-          modifier = '';
-          count = 0;
-          value = null;
         }
       }
     });
-
 
   return result;
 }
@@ -353,7 +428,7 @@ function parse(props) {
 function createCssFile(component, content) {
   fs.writeFile(`./figma-parsed/${component.toLowerCase()}.scss`, content, function (err) {
     if (err) throw err;
-    console.log('Variables scss file is created successfully.');
+    console.log(`${component} scss mixin file is created successfully.`);
   });
 }
 
@@ -418,14 +493,14 @@ function collectProperties(variant, propsMap, modifier, component, child = '') {
     })
     .forEach((css) => {
       const data = BASE_STYLES_MAP[css];
-      const iconInside = variant.children?.find(item => item.type === 'VECTOR');
+      const iconInside = variant.children?.find(item => item.type === 'VECTOR' || item.name.toUpperCase() === 'VECTOR');
       let figmaValue = data.collector(variant);
 
       if (css === 'color' && iconInside) {
         figmaValue = data.collector(iconInside);
       }
 
-      if (figmaValue) {
+      if (figmaValue || figmaValue === 0) {
         const units = data.units ? data.units : '';
 
         variantData.values[css] = `${figmaValue}${units}`;
@@ -524,7 +599,7 @@ ${props}
 
   return `// ${component} // -----------------------------
 ${variables}
-@mixin ${component.toLowerCase()} {
+@mixin ${lowerCaseFirstLetter(component)} {
 ${baseStyles}
 ${result}
 }`

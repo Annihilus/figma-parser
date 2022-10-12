@@ -3,12 +3,12 @@ $type-default__spinner: rgba(128, 197, 162, 1);
 $type-success__spinner: rgba(255, 255, 255, 1);
 
 @mixin button {
-  border-radius: 2px;
   align-items: center;
   justify-content: center;
   gap: 4px;
   box-shadow: none;
   transition: all 300ms ease-out;
+  flex-direction: row;
   font-family: Roboto;
   font-weight: 400;
 
@@ -194,7 +194,11 @@ $type-success__spinner: rgba(255, 255, 255, 1);
   &.type-success.size-default.icon:disabled,
   &.type-success.size-default.text:hover,
   &.type-success.size-default.icon.text:hover,
-  &.type-success.size-default.icon:hover {
+  &.type-success.size-default.icon:hover,
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text.right,
+  &.type-default.size-default.text.middle,
+  &.type-default.size-default.text:hover.left {
     height: 36px;
   }
 
@@ -253,7 +257,11 @@ $type-success__spinner: rgba(255, 255, 255, 1);
   &.type-success.size-supersmallest.text.progress,
   &.type-success.size-supersmallest.icon.text:disabled,
   &.type-success.size-supersmallest.text:hover,
-  &.type-success.size-supersmallest.icon.text:hover {
+  &.type-success.size-supersmallest.icon.text:hover,
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text.right,
+  &.type-default.size-default.text.middle,
+  &.type-default.size-default.text:hover.left {
     padding: 0px 12px 0px 12px;
   }
 
@@ -275,16 +283,10 @@ $type-success__spinner: rgba(255, 255, 255, 1);
     padding: 0px 9px 0px 9px;
   }
 
-  &.type-default.size-default.text:hover,
-  &.type-default.size-default.icon.text:hover,
-  &.type-default.size-default.icon:hover,
-  &.type-default.size-small.text:hover,
-  &.type-default.size-small.icon.text:hover,
-  &.type-default.size-small.icon:hover,
-  &.type-default.size-smallest.text:hover,
-  &.type-default.size-smallest.icon.text:hover,
-  &.type-default.size-supersmallest.text:hover,
-  &.type-default.size-supersmallest.icon.text:hover,
+  &.type-default.size-default.text:hover.left {
+    border: 1px solid rgba(0, 125, 50, 1);
+  }
+
   &.type-success.size-default.text,
   &.type-success.size-default.icon.text,
   &.type-success.size-default.icon,
@@ -295,23 +297,36 @@ $type-success__spinner: rgba(255, 255, 255, 1);
   &.type-success.size-smallest.icon.text,
   &.type-success.size-supersmallest.text,
   &.type-success.size-supersmallest.icon.text {
-    border: 1px solid rgba(0, 125, 50, 1);
-    background: rgba(0, 125, 50, 1);
+    border: 1px solid rgba(161, 7, 155, 1);
+    background: rgba(161, 7, 155, 1);
   }
 
-  &.type-success.size-default.text:disabled,
-  &.type-success.size-default.text.progress,
-  &.type-success.size-default.icon.text:disabled,
-  &.type-success.size-small.text:disabled,
-  &.type-success.size-small.text.progress,
-  &.type-success.size-small.icon.text:disabled,
-  &.type-success.size-smallest.text:disabled,
-  &.type-success.size-smallest.text.progress,
-  &.type-success.size-smallest.icon.text:disabled,
-  &.type-success.size-supersmallest.text:disabled,
-  &.type-success.size-supersmallest.text.progress,
-  &.type-success.size-supersmallest.icon.text:disabled {
-    border: 1px solid rgba(128, 197, 162, 1);
+  &.type-default.size-default.text:hover,
+  &.type-default.size-default.icon.text:hover,
+  &.type-default.size-default.icon:hover,
+  &.type-default.size-small.text:hover,
+  &.type-default.size-small.icon.text:hover,
+  &.type-default.size-small.icon:hover,
+  &.type-default.size-smallest.text:hover,
+  &.type-default.size-smallest.icon.text:hover,
+  &.type-default.size-supersmallest.text:hover,
+  &.type-default.size-supersmallest.icon.text:hover {
+    border: 1px solid rgba(161, 8, 155, 1);
+    background: rgba(161, 8, 155, 1);
+  }
+
+  &.type-success.size-default.text:hover,
+  &.type-success.size-default.icon.text:hover,
+  &.type-success.size-default.icon:hover,
+  &.type-success.size-small.text:hover,
+  &.type-success.size-small.icon.text:hover,
+  &.type-success.size-small.icon:hover,
+  &.type-success.size-smallest.text:hover,
+  &.type-success.size-smallest.icon.text:hover,
+  &.type-success.size-supersmallest.text:hover,
+  &.type-success.size-supersmallest.icon.text:hover {
+    border: 1px solid rgba(173, 63, 225, 1);
+    background: rgba(173, 63, 225, 1);
   }
 
   &.type-default.size-default.text,
@@ -337,29 +352,116 @@ $type-success__spinner: rgba(255, 255, 255, 1);
   &.type-default.size-supersmallest.icon.text,
   &.type-default.size-supersmallest.text:disabled,
   &.type-default.size-supersmallest.text.progress,
-  &.type-default.size-supersmallest.icon.text:disabled {
+  &.type-default.size-supersmallest.icon.text:disabled,
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text.right,
+  &.type-default.size-default.text.middle {
     border: 1px solid rgba(204, 204, 204, 1);
-    background: rgba(255, 255, 255, 1);
   }
 
-  &.type-success.size-default.text:hover,
-  &.type-success.size-default.icon.text:hover,
-  &.type-success.size-default.icon:hover,
-  &.type-success.size-small.text:hover,
-  &.type-success.size-small.icon.text:hover,
-  &.type-success.size-small.icon:hover,
-  &.type-success.size-smallest.text:hover,
-  &.type-success.size-smallest.icon.text:hover,
-  &.type-success.size-supersmallest.text:hover,
-  &.type-success.size-supersmallest.icon.text:hover {
-    border: 1px solid rgba(70, 131, 201, 1);
-    background: rgba(70, 131, 201, 1);
+  &.type-success.size-default.text:disabled,
+  &.type-success.size-default.text.progress,
+  &.type-success.size-default.icon.text:disabled,
+  &.type-success.size-small.text:disabled,
+  &.type-success.size-small.text.progress,
+  &.type-success.size-small.icon.text:disabled,
+  &.type-success.size-smallest.text:disabled,
+  &.type-success.size-smallest.text.progress,
+  &.type-success.size-smallest.icon.text:disabled,
+  &.type-success.size-supersmallest.text:disabled,
+  &.type-success.size-supersmallest.text.progress,
+  &.type-success.size-supersmallest.icon.text:disabled {
+    border: 1px solid rgba(226, 126, 222, 1);
   }
 
   &.type-success.size-default.icon:disabled,
   &.type-success.size-small.icon:disabled {
     border: none;
-    color: rgba(128, 197, 162, 1);
+    color: rgba(226, 126, 222, 1);
+  }
+
+  &.type-default.size-default.text.middle {
+    border-radius: 0;
+  }
+
+  &.type-default.size-default.text.right {
+    border-radius: 0px 2px 2px 0px;
+  }
+
+  &.type-default.size-default.text,
+  &.type-default.size-default.icon.text,
+  &.type-default.size-default.icon,
+  &.type-default.size-default.text:disabled,
+  &.type-default.size-default.text.progress,
+  &.type-default.size-default.icon.text:disabled,
+  &.type-default.size-default.icon:disabled,
+  &.type-default.size-default.text:hover,
+  &.type-default.size-default.icon.text:hover,
+  &.type-default.size-default.icon:hover,
+  &.type-default.size-small.text,
+  &.type-default.size-small.icon.text,
+  &.type-default.size-small.icon,
+  &.type-default.size-small.text:disabled,
+  &.type-default.size-small.text.progress,
+  &.type-default.size-small.icon.text:disabled,
+  &.type-default.size-small.icon:disabled,
+  &.type-default.size-small.text:hover,
+  &.type-default.size-small.icon.text:hover,
+  &.type-default.size-small.icon:hover,
+  &.type-default.size-smallest.text,
+  &.type-default.size-smallest.icon.text,
+  &.type-default.size-smallest.text:disabled,
+  &.type-default.size-smallest.text.progress,
+  &.type-default.size-smallest.icon.text:disabled,
+  &.type-default.size-smallest.text:hover,
+  &.type-default.size-smallest.icon.text:hover,
+  &.type-default.size-supersmallest.text,
+  &.type-default.size-supersmallest.icon.text,
+  &.type-default.size-supersmallest.text:disabled,
+  &.type-default.size-supersmallest.text.progress,
+  &.type-default.size-supersmallest.icon.text:disabled,
+  &.type-default.size-supersmallest.text:hover,
+  &.type-default.size-supersmallest.icon.text:hover,
+  &.type-success.size-default.text,
+  &.type-success.size-default.icon.text,
+  &.type-success.size-default.icon,
+  &.type-success.size-default.text:disabled,
+  &.type-success.size-default.text.progress,
+  &.type-success.size-default.icon.text:disabled,
+  &.type-success.size-default.icon:disabled,
+  &.type-success.size-default.text:hover,
+  &.type-success.size-default.icon.text:hover,
+  &.type-success.size-default.icon:hover,
+  &.type-success.size-small.text,
+  &.type-success.size-small.icon.text,
+  &.type-success.size-small.icon,
+  &.type-success.size-small.text:disabled,
+  &.type-success.size-small.text.progress,
+  &.type-success.size-small.icon.text:disabled,
+  &.type-success.size-small.icon:disabled,
+  &.type-success.size-small.text:hover,
+  &.type-success.size-small.icon.text:hover,
+  &.type-success.size-small.icon:hover,
+  &.type-success.size-smallest.text,
+  &.type-success.size-smallest.icon.text,
+  &.type-success.size-smallest.text:disabled,
+  &.type-success.size-smallest.text.progress,
+  &.type-success.size-smallest.icon.text:disabled,
+  &.type-success.size-smallest.text:hover,
+  &.type-success.size-smallest.icon.text:hover,
+  &.type-success.size-supersmallest.text,
+  &.type-success.size-supersmallest.icon.text,
+  &.type-success.size-supersmallest.text:disabled,
+  &.type-success.size-supersmallest.text.progress,
+  &.type-success.size-supersmallest.icon.text:disabled,
+  &.type-success.size-supersmallest.text:hover,
+  &.type-success.size-supersmallest.icon.text:hover {
+    border-radius: 2px;
+  }
+
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text:hover.left {
+    border-radius: 2px 0px 0px 2px;
   }
 
   &.type-success.size-default.text:disabled,
@@ -376,14 +478,60 @@ $type-success__spinner: rgba(255, 255, 255, 1);
   &.type-success.size-supersmallest.text:disabled,
   &.type-success.size-supersmallest.text.progress,
   &.type-success.size-supersmallest.icon.text:disabled {
-    background: rgba(128, 197, 162, 1);
+    background: rgba(226, 126, 222, 1);
+  }
+
+  &.type-default.size-default.text,
+  &.type-default.size-default.icon.text,
+  &.type-default.size-default.icon,
+  &.type-default.size-default.text:disabled,
+  &.type-default.size-default.text.progress,
+  &.type-default.size-default.icon.text:disabled,
+  &.type-default.size-default.icon:disabled,
+  &.type-default.size-small.text,
+  &.type-default.size-small.icon.text,
+  &.type-default.size-small.icon,
+  &.type-default.size-small.text:disabled,
+  &.type-default.size-small.text.progress,
+  &.type-default.size-small.icon.text:disabled,
+  &.type-default.size-small.icon:disabled,
+  &.type-default.size-smallest.text,
+  &.type-default.size-smallest.icon.text,
+  &.type-default.size-smallest.text:disabled,
+  &.type-default.size-smallest.text.progress,
+  &.type-default.size-smallest.icon.text:disabled,
+  &.type-default.size-supersmallest.text,
+  &.type-default.size-supersmallest.icon.text,
+  &.type-default.size-supersmallest.text:disabled,
+  &.type-default.size-supersmallest.text.progress,
+  &.type-default.size-supersmallest.icon.text:disabled,
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text.right,
+  &.type-default.size-default.text.middle,
+  &.type-default.size-default.text:hover.left {
+    background: rgba(255, 255, 255, 1);
+  }
+
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text.right,
+  &.type-default.size-default.text.middle,
+  &.type-default.size-default.text:hover.left {
+    color: rgba(0, 0, 0, 1);
+  }
+
+  &.type-success.size-default.icon,
+  &.type-success.size-small.icon {
+    color: rgba(161, 7, 155, 1);
   }
 
   &.type-default.size-default.icon:hover,
-  &.type-default.size-small.icon:hover,
-  &.type-success.size-default.icon,
-  &.type-success.size-small.icon {
-    color: rgba(0, 125, 50, 1);
+  &.type-default.size-small.icon:hover {
+    color: rgba(161, 8, 155, 1);
+  }
+
+  &.type-success.size-default.icon:hover,
+  &.type-success.size-small.icon:hover {
+    color: rgba(173, 63, 225, 1);
   }
 
   &.type-default.size-default.text:disabled,
@@ -455,11 +603,6 @@ $type-success__spinner: rgba(255, 255, 255, 1);
     color: rgba(51, 51, 51, 1);
   }
 
-  &.type-success.size-default.icon:hover,
-  &.type-success.size-small.icon:hover {
-    color: rgba(70, 131, 201, 1);
-  }
-
   &.type-default.size-default.text,
   &.type-default.size-default.icon.text,
   &.type-default.size-default.text:disabled,
@@ -501,7 +644,11 @@ $type-success__spinner: rgba(255, 255, 255, 1);
   &.type-success.size-smallest.text.progress,
   &.type-success.size-smallest.icon.text:disabled,
   &.type-success.size-smallest.text:hover,
-  &.type-success.size-smallest.icon.text:hover {
+  &.type-success.size-smallest.icon.text:hover,
+  &.type-default.size-default.text.left,
+  &.type-default.size-default.text.right,
+  &.type-default.size-default.text.middle,
+  &.type-default.size-default.text:hover.left {
     line-height: 22px;
     font-size: 16px;
   }

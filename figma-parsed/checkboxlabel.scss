@@ -1,0 +1,15 @@
+// CheckboxLabel // -----------------------------
+
+@mixin checkboxLabel {
+  padding: 0px 0px 0px 0px;
+  border: none;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 1);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 1);
+  flex-direction: row;
+
+}

@@ -1,8 +1,36 @@
 import { colorToRgba } from './color.js';
 
-const POSITIONS = {
+const POSITIONS_VERTICAL = {
   MAX: 'bottom',
   CENTER: 'center',
+  default: 'flex-start',
+}
+
+const POSITIONS_HORIZONTAL = {
+  MAX: 'right',
+  CENTER: 'center',
+  default: 'left',
+}
+
+const DIRECTION = {
+  VERTICAL: 'column',
+  HORIZONTAL: 'row',
+}
+
+export function collectWidth(variant) {
+  if (variant.primaryAxisSizingMode === 'FIXED') {
+    return `${variant.absoluteBoundingBox.width}px`;
+  }
+
+  return '100%';
+}
+
+export function collectHeight(variant) {
+  if (variant.counterAxisSizingMode === 'FIXED') {
+    return `${variant.absoluteBoundingBox.height}px`;
+  }
+
+  return 'auto';
 }
 
 export function collectBorder(variant) {
@@ -14,6 +42,16 @@ export function collectBorder(variant) {
   const type = variant.strokes[0].type.toLowerCase();
 
   return `${variant.strokeWeight}px ${type} ${color}`;
+}
+
+export function collectBorderRadius(variant) {
+  if (!variant.cornerRadius && variant.rectangleCornerRadii) {
+    return variant.rectangleCornerRadii.map(i => `${i}px`).join(' ');
+  }
+
+  const result = variant.cornerRadius ? `${variant.cornerRadius}px` : 0;
+
+  return result;
 }
 
 export function collectBackground(variant) {
@@ -63,7 +101,14 @@ export function collectTransition(variant) {
   return `all ${variant.transitionDuration}ms ${variant.transitionEasing.toLowerCase().replace('_', '-')}`;
 }
 
-export function collectAlign(value, defaultValue) {
-  // console.log(POSITIONS[value], value, defaultValue);
-  return POSITIONS[value] ? POSITIONS[value] : defaultValue;
+export function collectAlign(value, direction) {
+  if (direction === 'vertical') {
+    return POSITIONS_VERTICAL[value] || POSITIONS_VERTICAL.default;
+  }
+
+  return POSITIONS_HORIZONTAL[value] || POSITIONS_HORIZONTAL.default;
+}
+
+export function collectDirection(value) {
+  return DIRECTION[value.layoutMode];
 }

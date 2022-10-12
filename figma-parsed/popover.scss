@@ -1,0 +1,19 @@
+// Popover // -----------------------------
+
+@mixin popover {
+  padding: 16px 16px 16px 16px;
+  border: 3px solid rgba(0, 0, 0, 1);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 1);
+  align-items: flex-start;
+  justify-content: left;
+  gap: 0px;
+  box-shadow: 0px 2px 10px  rgba(0, 0, 0, 0.11999999731779099);
+  color: rgba(0, 0, 0, 1);
+  flex-direction: column;
+  font-family: Roboto;
+  line-height: 22px;
+  font-size: 48px;
+  font-weight: 400;
+
+}

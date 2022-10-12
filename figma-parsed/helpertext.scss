@@ -1,0 +1,30 @@
+// HelperText // -----------------------------
+
+@mixin helperText {
+  height: auto;
+  padding: 0px 8px 0px 8px;
+  border: none;
+  border-radius: 0;
+  align-items: flex-start;
+  justify-content: left;
+  gap: 10px;
+  box-shadow: none;
+  flex-direction: row;
+  font-family: Roboto;
+  line-height: 22px;
+  font-size: 16px;
+  font-weight: 400;
+
+  &.hint-error {
+    width: 100%;
+    background: rgba(245, 218, 214, 1);
+    color: rgba(207, 69, 52, 1);
+  }
+
+  &.hint-disabled {
+    width: 350px;
+    background: transparent;
+    color: rgba(204, 204, 204, 1);
+  }
+
+}
