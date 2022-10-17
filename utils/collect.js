@@ -1,5 +1,10 @@
 import { colorToRgba } from './color.js';
 
+const TEXT_TRANSFORM = {
+  UPPER: 'uppercase',
+  LOWER: 'lowercase',
+}
+
 const POSITIONS_VERTICAL = {
   MAX: 'bottom',
   CENTER: 'center',
@@ -18,17 +23,17 @@ const DIRECTION = {
 }
 
 export function collectWidth(variant) {
-  if (variant.primaryAxisSizingMode === 'FIXED') {
+  // if (variant.primaryAxisSizingMode === 'FIXED') {
     return `${variant.absoluteBoundingBox.width}px`;
-  }
+  // }
 
-  return '100%';
+  return 'auto';
 }
 
 export function collectHeight(variant) {
-  if (variant.counterAxisSizingMode === 'FIXED') {
+  // if (variant.counterAxisSizingMode === 'FIXED') {
     return `${variant.absoluteBoundingBox.height}px`;
-  }
+  // }
 
   return 'auto';
 }
@@ -111,4 +116,14 @@ export function collectAlign(value, direction) {
 
 export function collectDirection(value) {
   return DIRECTION[value.layoutMode];
+}
+
+export function collectTextTransform(variant) {
+  const value = variant.style?.textCase;
+
+  if (value) {
+    return TEXT_TRANSFORM[value] || null;
+  }
+
+  return null;
 }

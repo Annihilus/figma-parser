@@ -1,0 +1,112 @@
+// FormRow // -----------------------------
+
+@mixin formRow {
+
+
+  &.hint.direction-horizontal .label,
+  &.direction-horizontal .label,
+  &.hint.error.direction-horizontal .label,
+  &.error.direction-horizontal .label {
+    width: 150px;
+  }
+
+  &.hint.direction-vertical .label,
+  &.direction-vertical .label,
+  &.hint.error.direction-vertical .label,
+  &.error.direction-vertical .label {
+    width: 350px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .label {
+    height: 36px;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    font-family: Roboto;
+    line-height: 36px;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  &.hint.direction-horizontal,
+  &.direction-horizontal,
+  &.hint.error.direction-horizontal,
+  &.error.direction-horizontal,
+  &.hint.direction-vertical,
+  &.direction-vertical,
+  &.hint.error.direction-vertical,
+  &.error.direction-vertical {
+    padding: 0px 0px 0px 0px;
+    background: rgba(255, 255, 255, 1);
+    gap: 0px;
+    color: rgba(255, 255, 255, 1);
+  }
+
+  &.hint.direction-horizontal .label,
+  &.direction-horizontal .label,
+  &.hint.error.direction-horizontal .label,
+  &.error.direction-horizontal .label,
+  &.hint.direction-vertical .label,
+  &.direction-vertical .label,
+  &.hint.error.direction-vertical .label,
+  &.error.direction-vertical .label {
+    padding: 0px 8px 0px 0px;
+    background: transparent;
+    gap: 3px;
+  }
+
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .label,
+  &.direction-horizontal,
+  &.direction-horizontal .label,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .label,
+  &.error.direction-horizontal,
+  &.error.direction-horizontal .label,
+  &.hint.direction-vertical,
+  &.direction-vertical,
+  &.hint.error.direction-vertical,
+  &.error.direction-vertical {
+    align-items: flex-start;
+    justify-content: left;
+  }
+
+  &.hint.error.direction-horizontal .label,
+  &.error.direction-horizontal .label,
+  &.hint.error.direction-vertical .label,
+  &.error.direction-vertical .label {
+    color: rgba(207, 69, 52, 1);
+  }
+
+  &.hint.direction-horizontal .label,
+  &.direction-horizontal .label,
+  &.hint.direction-vertical .label,
+  &.direction-vertical .label {
+    color: rgba(51, 51, 51, 1);
+  }
+
+  &.hint.direction-vertical,
+  &.direction-vertical,
+  &.hint.error.direction-vertical,
+  &.error.direction-vertical {
+    flex-direction: column;
+  }
+
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .label,
+  &.direction-horizontal,
+  &.direction-horizontal .label,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .label,
+  &.error.direction-horizontal,
+  &.error.direction-horizontal .label,
+  &.hint.direction-vertical .label,
+  &.direction-vertical .label,
+  &.hint.error.direction-vertical .label,
+  &.error.direction-vertical .label {
+    flex-direction: row;
+  }
+
+}

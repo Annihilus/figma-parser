@@ -1,6 +1,8 @@
 // Popover // -----------------------------
 
 @mixin popover {
+  width: 200px;
+  height: 200px;
   padding: 16px 16px 16px 16px;
   border: 3px solid rgba(0, 0, 0, 1);
   border-radius: 2px;

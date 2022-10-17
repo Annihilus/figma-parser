@@ -12,9 +12,11 @@ import {
   collectDirection,
   collectWidth,
   collectHeight,
+  collectTextTransform,
 } from './utils/collect.js';
 
-const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
+// const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
+const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
 const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
 const STATES = ['hover', 'disabled', 'readonly'];
@@ -39,7 +41,6 @@ const CONFIG = {
       }
     },
     ButtonToggle: {
-      exclude: ['width', 'height'],
       children: {
         ignore: true,
       }
@@ -74,14 +75,14 @@ const CONFIG = {
     RadiobuttonLabel: {
       exclude: ['width', 'height'],
       children: {
-         ignore: true,
+        ignore: true,
       }
     },
     Input: {
       exclude: ['width'],
       children: {
         input: {
-          exclude: ['width'],
+          exclude: ['width', 'height'],
         },
         placeholder: {
           include: ['color'],
@@ -120,9 +121,6 @@ const CONFIG = {
         ignore: true,
       },
     },
-    Popover: {
-      exclude: ['width', 'height'],
-    },
     HintedElement: {
       exclude: ['width', 'height'],
       children: {
@@ -130,8 +128,38 @@ const CONFIG = {
       }
     },
     HelperText: {
-      // exclude: ['width', 'height'],
+      exclude: ['width', 'height'],
     },
+    Popover: {},
+    FormBlock: {
+      exclude: ['width', 'height'],
+      children: {
+        title: {
+          exclude: ['width'],
+        },
+        content: {
+          exclude: ['width', 'height'],
+        },
+        row: {
+          ignore: true,
+        }
+      },
+    },
+    FormRow: {
+      exclude: ['width', 'height'],
+      children: {
+        HintedElement: {
+          ignore: true,
+        },
+        Input: {
+          ignore: true,
+        },
+      },
+    },
+    Select: {
+      exclude: ['width'],
+      statesAsClass: ['placeholder'],
+    }
   },
 }
 
@@ -153,6 +181,9 @@ const FONT_STYLES_MAP = {
   },
   'font-weight': {
     collector: (variant) => variant.style.fontWeight,
+  },
+  'text-transform': {
+    collector: (variant) => collectTextTransform(variant),
   },
   'color': {
     collector: collectColor,
@@ -237,20 +268,20 @@ async function getFiles(path) {
     });
 
   // Parsing components
-  findComponents(components)
+  collectComponents(components)
+    .filter(component => CONFIG.components[component.name.replace(/\s/g, "")])
     .forEach(component => {
       createCssFile(component.name, parseComponent(component));
     });
-
 }
 
-function findComponents(data, componentSets = []) {
+function collectComponents(data, componentSets = []) {
   if (data.children) {
     data.children.forEach(child => {
       if (child.type === 'COMPONENT_SET') {
         componentSets.push(child);
       } else if (child.children) {
-        findComponents(child, componentSets);
+        collectComponents(child, componentSets);
       }
     });
   }
@@ -293,21 +324,18 @@ function parseComponent(component) {
   const children = [];
 
   component.children.forEach(variant => {
-    const modifier = getModifier(variant, component.name);
+    const modifier = getModifier(variant.name, component.name);
 
     collectProperties(variant, propsMap, modifier, component.name);
 
     const ignore = CONFIG.components[component.name] && CONFIG.components[component.name].children?.ignore;
 
     if (variant.children && !ignore) {
-      collectChild(variant, children, modifier, component.name);
+      collectChild(variant, propsMap, modifier, component.name);
     }
   });
 
-  const parsedChildren = parse(children);
-  const parsed = parse(propsMap);
-
-  const mixin = createMixin({...parsedChildren, ...parsed}, component.name);
+  const mixin = createMixin(parse(propsMap), component.name);
 
   return mixin;
 }
@@ -347,9 +375,12 @@ function parse(props) {
       let count = 0;
 
       if (sortedByProp.length === 1) {
+        modifier = sortedByProp[0].component ? `.${sortedByProp[0].component}` : modifier;
+
         if (!result[modifier]) {
           result[modifier] = {}
         }
+
         result[modifier][key] = sortedByProp[0].values[key];
       } else {
         for (let i = 0; i < sortedByProp.length; i++) {
@@ -389,13 +420,13 @@ function parse(props) {
               modifier = `&,${modifier}`;
             }
           } else {
+            const component = sortedByProp[i].component;
+            const htmlElement = sortedByProp[i].element;
+            const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
+
             // TODO this dont work properly
             if (count === sortedByProp.length - 1) {
-              const component = sortedByProp[i].component;
-              const htmlElement = sortedByProp[i].element;
-
               if (component) {
-                const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
                 modifier = componentSelector;
               } else if (htmlElement) {
                 modifier = htmlElement;
@@ -432,39 +463,54 @@ function createCssFile(component, content) {
   });
 }
 
-function getModifier(variant, component) {
-  const variantModifiers = variant.name
-    .split(',')
-    .map(modifier => modifier.split('='))
-    .map(modifier => [modifier[0].replace(/\s/g, ''), modifier[1]])
-    .filter(modifier => {
-      return modifier[1].toLowerCase() !== 'false' && modifier[0].toLowerCase() !== 'placeholder'
+function getModifier(variantName, componentName) {
+  const result = variantName
+    .split(', ')
+    .map(item => item.split('=').map(i => lowerCaseFirstLetter(i)))
+    .filter(([ , value ]) => value !== 'false')
+    .map(([ key, value ]) => {
+      const prefix = getPrefix(key, componentName);
+
+      return value === 'true' ? prefix + key : `${prefix}${key}-${value}`;
     })
-    .map(modifier => {
-      const statesAsClass = CONFIG?.components[component]?.statesAsClass;
-      const modName = lowerCaseFirstLetter(modifier[0]);
-      const modValue = lowerCaseFirstLetter(modifier[1]);
-      let prefix = STATES.includes(modName) ? ':' : '.';
+    .join('');
 
-      if (statesAsClass?.includes(modName)) {
-        prefix = '.';
-      }
-
-      if (modifier[1].toLowerCase() === 'true') {
-        return `${prefix}${modName}`;
-      }
-
-      return `${prefix}${modName}-${modValue}`;
-    })
-    .join('')
-    .replace(/\s/g, '');
-
-  if (!variantModifiers.length) {
-    return '';
-  }
-
-  return `&${variantModifiers}`;
+  return result.length ? `&${result}` : '';
 }
+
+function getPrefix(key, component) {
+  return STATES.includes(key) && !CONFIG?.components[component]?.statesAsClass?.includes(key) ? ':' : '.';
+}
+
+// function getModifier(variant, component) {
+//   const variantModifiers = variant.name
+//     .split(',')
+//     .map(modifier => modifier.split('='))
+//     .map(modifier => [modifier[0].replace(/\s/g, ''), modifier[1]])
+//     .filter(modifier => {
+//       return modifier[1].toLowerCase() !== 'false' && modifier[0].toLowerCase() !== 'placeholder'
+//     })
+//     .map(modifier => {
+//       const statesAsClass = CONFIG?.components[component]?.statesAsClass;
+//       const modName = lowerCaseFirstLetter(modifier[0]);
+//       const modValue = lowerCaseFirstLetter(modifier[1]);
+//       const prefix = STATES.includes(modName) && !statesAsClass?.includes(modName) ? ':' : '.';
+
+//       if (modifier[1].toLowerCase() === 'true') {
+//         return `${prefix}${modName}`;
+//       }
+
+//       return `${prefix}${modName}-${modValue}`;
+//     })
+//     .join('')
+//     .replace(/\s/g, '');
+
+//   if (!variantModifiers.length) {
+//     return '';
+//   }
+
+//   return `&${variantModifiers}`;
+// }
 
 function collectProperties(variant, propsMap, modifier, component, child = '') {
   const childName = child.replace('$', '');
@@ -507,7 +553,7 @@ function collectProperties(variant, propsMap, modifier, component, child = '') {
       }
     });
 
-  const textChild = variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
+  let textChild = false ? variant : variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
 
   if (textChild) {
     Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
@@ -542,7 +588,6 @@ function collectProperties(variant, propsMap, modifier, component, child = '') {
 
     propsMap.push(variantData);
   }
-
 }
 
 // Getting all

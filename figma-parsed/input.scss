@@ -15,6 +15,7 @@
 
   .iw-icon {
     width: 20px;
+    box-shadow: none;
   }
 
   &.leadingIcon .iw-icon,
@@ -56,161 +57,65 @@
     border-radius: 0;
   }
 
-  &.leadingIcon.filled.error input,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active.error input {
-    height: 22px;
+  &.leadingIcon,
+  &.trailingIcon,
+  &.leadingIcon.trailingIcon,
+  &.filled,
+  &.leadingIcon.filled,
+  &.filled.trailingIcon,
+  &.leadingIcon.filled.trailingIcon,
+  &:disabled,
+  &.leadingIcon:disabled,
+  &.trailingIcon:disabled,
+  &.leadingIcon.trailingIcon:disabled,
+  &.filled:disabled,
+  &.leadingIcon.filled:disabled,
+  &.filled.trailingIcon:disabled,
+  &.leadingIcon.filled.trailingIcon:disabled,
+  &:hover,
+  &.leadingIcon:hover,
+  &.trailingIcon:hover,
+  &.leadingIcon.trailingIcon:hover,
+  &.filled:hover,
+  &.leadingIcon.filled:hover,
+  &.filled.trailingIcon:hover,
+  &.leadingIcon.filled.trailingIcon:hover,
+  &.active,
+  &.leadingIcon.active,
+  &.trailingIcon.active,
+  &.leadingIcon.trailingIcon.active,
+  &.filled.closeIcon.active,
+  &.leadingIcon.filled.closeIcon.active,
+  &.filled.closeIcon.trailingIcon.active,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active,
+  &.error,
+  &.filled.error,
+  &.leadingIcon.filled.error,
+  &.filled.trailingIcon.error,
+  &.leadingIcon.filled.trailingIcon.error,
+  &:hover.error,
+  &.filled:hover.error,
+  &.leadingIcon.filled:hover.error,
+  &.filled.trailingIcon:hover.error,
+  &.leadingIcon.filled.trailingIcon:hover.error,
+  &.filled.closeIcon.active.error,
+  &.leadingIcon.filled.closeIcon.active.error,
+  &.filled.closeIcon.trailingIcon.active.error,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error {
+    height: 36px;
+    padding: 6px 8px 6px 8px;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
   input,
-  &.leadingIcon input,
-  &.trailingIcon input,
-  &.leadingIcon.trailingIcon input,
-  &.filled input,
-  &.leadingIcon.filled input,
-  &.filled.trailingIcon input,
-  &.leadingIcon.filled.trailingIcon input,
-  &:disabled input,
-  &.leadingIcon:disabled input,
-  &.trailingIcon:disabled input,
-  &.leadingIcon.trailingIcon:disabled input,
-  &.filled:disabled input,
-  &.leadingIcon.filled:disabled input,
-  &.filled.trailingIcon:disabled input,
-  &.leadingIcon.filled.trailingIcon:disabled input,
-  &:hover input,
-  &.leadingIcon:hover input,
-  &.trailingIcon:hover input,
-  &.leadingIcon.trailingIcon:hover input,
-  &.filled:hover input,
-  &.leadingIcon.filled:hover input,
-  &.filled.trailingIcon:hover input,
-  &.leadingIcon.filled.trailingIcon:hover input,
-  &.active input,
-  &.leadingIcon.active input,
-  &.trailingIcon.active input,
-  &.leadingIcon.trailingIcon.active input,
-  &.filled.closeIcon.active input,
-  &.leadingIcon.filled.closeIcon.active input,
-  &.filled.closeIcon.trailingIcon.active input,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active input,
-  &.error input,
-  &.filled.error input,
-  &.filled.trailingIcon.error input,
-  &.leadingIcon.filled.trailingIcon.error input,
-  &:hover.error input,
-  &.filled:hover.error input,
-  &.leadingIcon.filled:hover.error input,
-  &.filled.trailingIcon:hover.error input,
-  &.leadingIcon.filled.trailingIcon:hover.error input,
-  &.filled.closeIcon.active.error input,
-  &.leadingIcon.filled.closeIcon.active.error input,
-  &.filled.closeIcon.trailingIcon.active.error input {
-    height: 24px;
-  }
-
-  input {
-    padding: 0px 0px 0px 0px;
-    border: none;
-    background: transparent;
-    align-items: flex-start;
-    justify-content: left;
-    gap: 0px;
-    box-shadow: none;
-    font-family: Roboto;
-    line-height: 22px;
-    font-size: 16px;
-    font-weight: 400;
-  }
-
-  input,
-  &.leadingIcon input,
-  &.trailingIcon input,
-  &.leadingIcon.trailingIcon input,
-  &.filled input,
-  &.leadingIcon.filled input,
-  &.filled.trailingIcon input,
-  &.leadingIcon.filled.trailingIcon input,
-  &:disabled input,
-  &.leadingIcon:disabled input,
-  &.trailingIcon:disabled input,
-  &.leadingIcon.trailingIcon:disabled input,
-  &.filled:disabled input,
-  &.leadingIcon.filled:disabled input,
-  &.filled.trailingIcon:disabled input,
-  &.leadingIcon.filled.trailingIcon:disabled input,
-  &:hover input,
-  &.leadingIcon:hover input,
-  &.trailingIcon:hover input,
-  &.leadingIcon.trailingIcon:hover input,
-  &.filled:hover input,
-  &.leadingIcon.filled:hover input,
-  &.filled.trailingIcon:hover input,
-  &.leadingIcon.filled.trailingIcon:hover input,
-  &.active input,
-  &.leadingIcon.active input,
-  &.trailingIcon.active input,
-  &.leadingIcon.trailingIcon.active input,
-  &.filled.closeIcon.active input,
-  &.leadingIcon.filled.closeIcon.active input,
-  &.filled.closeIcon.trailingIcon.active input,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active input,
-  &.error input,
-  &.filled.error input,
-  &.leadingIcon.filled.error input,
-  &.filled.trailingIcon.error input,
-  &.leadingIcon.filled.trailingIcon.error input,
-  &:hover.error input,
-  &.filled:hover.error input,
-  &.leadingIcon.filled:hover.error input,
-  &.filled.trailingIcon:hover.error input,
-  &.leadingIcon.filled.trailingIcon:hover.error input,
-  &.filled.closeIcon.active.error input,
-  &.leadingIcon.filled.closeIcon.active.error input,
-  &.filled.closeIcon.trailingIcon.active.error input,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active.error input {
-    border-radius: 0px 0px 0px 0px;
-  }
-
   &.leadingIcon .iw-icon,
+  &.leadingIcon input,
+  &.trailingIcon input,
   &.trailingIcon .iw-icon,
   &.leadingIcon.trailingIcon .iw-icon,
-  &.leadingIcon:hover .iw-icon,
-  &.trailingIcon:hover .iw-icon,
-  &.leadingIcon.trailingIcon:hover .iw-icon {
-    color: rgba(128, 128, 128, 1);
-  }
-
-  input::placeholder,
-  &.leadingIcon input::placeholder,
-  &.trailingIcon input::placeholder,
-  &.leadingIcon.trailingIcon input::placeholder,
-  &:hover input::placeholder,
-  &.leadingIcon:hover input::placeholder,
-  &.trailingIcon:hover input::placeholder,
-  &.leadingIcon.trailingIcon:hover input::placeholder {
-    color: rgba(132, 132, 132, 1);
-  }
-
-  &:disabled input::placeholder,
-  &.leadingIcon:disabled .iw-icon,
-  &.leadingIcon:disabled input::placeholder,
-  &.trailingIcon:disabled input::placeholder,
-  &.trailingIcon:disabled .iw-icon,
-  &.leadingIcon.trailingIcon:disabled .iw-icon,
-  &.leadingIcon.trailingIcon:disabled input::placeholder,
-  &.filled:disabled input,
-  &.leadingIcon.filled:disabled .iw-icon,
-  &.leadingIcon.filled:disabled input,
-  &.filled.trailingIcon:disabled input,
-  &.filled.trailingIcon:disabled .iw-icon,
-  &.leadingIcon.filled.trailingIcon:disabled .iw-icon,
-  &.leadingIcon.filled.trailingIcon:disabled input {
-    color: rgba(204, 204, 204, 1);
-  }
-
-  input,
-  &.leadingIcon input,
-  &.trailingIcon input,
   &.leadingIcon.trailingIcon input,
   &.filled input,
   &.leadingIcon.filled .iw-icon,
@@ -220,12 +125,25 @@
   &.leadingIcon.filled.trailingIcon .iw-icon,
   &.leadingIcon.filled.trailingIcon input,
   &:disabled input,
+  &.leadingIcon:disabled .iw-icon,
   &.leadingIcon:disabled input,
   &.trailingIcon:disabled input,
+  &.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.trailingIcon:disabled .iw-icon,
   &.leadingIcon.trailingIcon:disabled input,
+  &.filled:disabled input,
+  &.leadingIcon.filled:disabled .iw-icon,
+  &.leadingIcon.filled:disabled input,
+  &.filled.trailingIcon:disabled input,
+  &.filled.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.filled.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.filled.trailingIcon:disabled input,
   &:hover input,
+  &.leadingIcon:hover .iw-icon,
   &.leadingIcon:hover input,
   &.trailingIcon:hover input,
+  &.trailingIcon:hover .iw-icon,
+  &.leadingIcon.trailingIcon:hover .iw-icon,
   &.leadingIcon.trailingIcon:hover input,
   &.filled:hover input,
   &.leadingIcon.filled:hover .iw-icon,
@@ -271,9 +189,14 @@
   &.leadingIcon.filled.closeIcon.active.error input,
   &.filled.closeIcon.trailingIcon.active.error input,
   &.filled.closeIcon.trailingIcon.active.error .iw-icon,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active.error .iw-icon,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active.error input {
-    color: rgba(51, 51, 51, 1);
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error input,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error .iw-icon {
+    padding: 0px 0px 0px 0px;
+    border: none;
+    background: transparent;
+    align-items: flex-start;
+    justify-content: left;
+    gap: 0px;
   }
 
   &:hover,
@@ -335,6 +258,55 @@
     color: rgba(190, 190, 190, 1);
   }
 
+  input,
+  &.leadingIcon input,
+  &.trailingIcon input,
+  &.leadingIcon.trailingIcon input,
+  &.filled input,
+  &.leadingIcon.filled input,
+  &.filled.trailingIcon input,
+  &.leadingIcon.filled.trailingIcon input,
+  &:disabled input,
+  &.leadingIcon:disabled input,
+  &.trailingIcon:disabled input,
+  &.leadingIcon.trailingIcon:disabled input,
+  &.filled:disabled input,
+  &.leadingIcon.filled:disabled input,
+  &.filled.trailingIcon:disabled input,
+  &.leadingIcon.filled.trailingIcon:disabled input,
+  &:hover input,
+  &.leadingIcon:hover input,
+  &.trailingIcon:hover input,
+  &.leadingIcon.trailingIcon:hover input,
+  &.filled:hover input,
+  &.leadingIcon.filled:hover input,
+  &.filled.trailingIcon:hover input,
+  &.leadingIcon.filled.trailingIcon:hover input,
+  &.active input,
+  &.leadingIcon.active input,
+  &.trailingIcon.active input,
+  &.leadingIcon.trailingIcon.active input,
+  &.filled.closeIcon.active input,
+  &.leadingIcon.filled.closeIcon.active input,
+  &.filled.closeIcon.trailingIcon.active input,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active input,
+  &.error input,
+  &.filled.error input,
+  &.leadingIcon.filled.error input,
+  &.filled.trailingIcon.error input,
+  &.leadingIcon.filled.trailingIcon.error input,
+  &:hover.error input,
+  &.filled:hover.error input,
+  &.leadingIcon.filled:hover.error input,
+  &.filled.trailingIcon:hover.error input,
+  &.leadingIcon.filled.trailingIcon:hover.error input,
+  &.filled.closeIcon.active.error input,
+  &.leadingIcon.filled.closeIcon.active.error input,
+  &.filled.closeIcon.trailingIcon.active.error input,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error input {
+    border-radius: 0px 0px 0px 0px;
+  }
+
   &.leadingIcon,
   &.trailingIcon,
   &.leadingIcon.trailingIcon,
@@ -375,50 +347,158 @@
     background: rgba(238, 238, 238, 1);
   }
 
+  &.leadingIcon .iw-icon,
+  &.trailingIcon .iw-icon,
+  &.leadingIcon.trailingIcon .iw-icon,
+  &.leadingIcon:hover .iw-icon,
+  &.trailingIcon:hover .iw-icon,
+  &.leadingIcon.trailingIcon:hover .iw-icon {
+    color: rgba(128, 128, 128, 1);
+  }
+
+  input::placeholder,
   &.leadingIcon,
+  &.leadingIcon input::placeholder,
   &.trailingIcon,
+  &.trailingIcon input::placeholder,
   &.leadingIcon.trailingIcon,
+  &.leadingIcon.trailingIcon input::placeholder,
   &.filled,
   &.leadingIcon.filled,
   &.filled.trailingIcon,
   &.leadingIcon.filled.trailingIcon,
+  &:hover input::placeholder,
+  &.leadingIcon:hover input::placeholder,
+  &.trailingIcon:hover input::placeholder,
+  &.leadingIcon.trailingIcon:hover input::placeholder,
   &.error,
+  &.error input::placeholder,
   &.filled.error,
   &.leadingIcon.filled.error,
   &.filled.trailingIcon.error,
-  &.leadingIcon.filled.trailingIcon.error {
+  &.leadingIcon.filled.trailingIcon.error,
+  &:hover.error input::placeholder {
     color: rgba(132, 132, 132, 1);
   }
 
-  &.leadingIcon.filled.closeIcon.trailingIcon.active,
-  &.leadingIcon.filled.closeIcon.trailingIcon.active.error {
+  &:disabled input::placeholder,
+  &.leadingIcon:disabled .iw-icon,
+  &.leadingIcon:disabled input::placeholder,
+  &.trailingIcon:disabled input::placeholder,
+  &.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.trailingIcon:disabled input::placeholder,
+  &.filled:disabled input,
+  &.leadingIcon.filled:disabled .iw-icon,
+  &.leadingIcon.filled:disabled input,
+  &.filled.trailingIcon:disabled input,
+  &.filled.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.filled.trailingIcon:disabled .iw-icon,
+  &.leadingIcon.filled.trailingIcon:disabled input {
+    color: rgba(204, 204, 204, 1);
+  }
+
+  &.leadingIcon.filled.closeIcon.trailingIcon.active {
     color: rgba(238, 238, 238, 1);
   }
 
+  input,
+  &.leadingIcon input,
+  &.trailingIcon input,
+  &.leadingIcon.trailingIcon input,
+  &.filled input,
+  &.leadingIcon.filled .iw-icon,
+  &.leadingIcon.filled input,
+  &.filled.trailingIcon input,
+  &.filled.trailingIcon .iw-icon,
+  &.leadingIcon.filled.trailingIcon .iw-icon,
+  &.leadingIcon.filled.trailingIcon input,
+  &:disabled input,
+  &.leadingIcon:disabled input,
+  &.trailingIcon:disabled input,
+  &.leadingIcon.trailingIcon:disabled input,
   &:hover,
+  &:hover input,
   &.leadingIcon:hover,
+  &.leadingIcon:hover input,
   &.trailingIcon:hover,
+  &.trailingIcon:hover input,
   &.leadingIcon.trailingIcon:hover,
+  &.leadingIcon.trailingIcon:hover input,
   &.filled:hover,
+  &.filled:hover input,
   &.leadingIcon.filled:hover,
+  &.leadingIcon.filled:hover .iw-icon,
+  &.leadingIcon.filled:hover input,
   &.filled.trailingIcon:hover,
+  &.filled.trailingIcon:hover input,
+  &.filled.trailingIcon:hover .iw-icon,
   &.leadingIcon.filled.trailingIcon:hover,
+  &.leadingIcon.filled.trailingIcon:hover .iw-icon,
+  &.leadingIcon.filled.trailingIcon:hover input,
   &.active,
+  &.active input,
   &.leadingIcon.active,
+  &.leadingIcon.active .iw-icon,
+  &.leadingIcon.active input,
   &.trailingIcon.active,
+  &.trailingIcon.active input,
+  &.trailingIcon.active .iw-icon,
   &.leadingIcon.trailingIcon.active,
+  &.leadingIcon.trailingIcon.active .iw-icon,
+  &.leadingIcon.trailingIcon.active input,
   &.filled.closeIcon.active,
+  &.filled.closeIcon.active input,
+  &.filled.closeIcon.active .iw-icon,
   &.leadingIcon.filled.closeIcon.active,
+  &.leadingIcon.filled.closeIcon.active .iw-icon,
+  &.leadingIcon.filled.closeIcon.active input,
   &.filled.closeIcon.trailingIcon.active,
+  &.filled.closeIcon.trailingIcon.active input,
+  &.filled.closeIcon.trailingIcon.active .iw-icon,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active .iw-icon,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active input,
+  &.error input,
+  &.filled.error input,
+  &.leadingIcon.filled.error .iw-icon,
+  &.leadingIcon.filled.error input,
+  &.filled.trailingIcon.error input,
+  &.filled.trailingIcon.error .iw-icon,
+  &.leadingIcon.filled.trailingIcon.error .iw-icon,
+  &.leadingIcon.filled.trailingIcon.error input,
   &:hover.error,
+  &:hover.error input,
   &.filled:hover.error,
+  &.filled:hover.error input,
   &.leadingIcon.filled:hover.error,
+  &.leadingIcon.filled:hover.error .iw-icon,
+  &.leadingIcon.filled:hover.error input,
   &.filled.trailingIcon:hover.error,
+  &.filled.trailingIcon:hover.error input,
+  &.filled.trailingIcon:hover.error .iw-icon,
   &.leadingIcon.filled.trailingIcon:hover.error,
+  &.leadingIcon.filled.trailingIcon:hover.error .iw-icon,
+  &.leadingIcon.filled.trailingIcon:hover.error input,
   &.filled.closeIcon.active.error,
+  &.filled.closeIcon.active.error input,
+  &.filled.closeIcon.active.error .iw-icon,
   &.leadingIcon.filled.closeIcon.active.error,
-  &.filled.closeIcon.trailingIcon.active.error {
+  &.leadingIcon.filled.closeIcon.active.error .iw-icon,
+  &.leadingIcon.filled.closeIcon.active.error input,
+  &.filled.closeIcon.trailingIcon.active.error,
+  &.filled.closeIcon.trailingIcon.active.error input,
+  &.filled.closeIcon.trailingIcon.active.error .iw-icon,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error input,
+  &.leadingIcon.filled.closeIcon.trailingIcon.active.error .iw-icon {
     color: rgba(51, 51, 51, 1);
+  }
+
+  input {
+    font-family: Roboto;
+    line-height: 22px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
 }
