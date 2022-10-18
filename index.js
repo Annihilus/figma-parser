@@ -15,8 +15,8 @@ import {
   collectTextTransform,
 } from './utils/collect.js';
 
-// const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
-const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
+const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
+// const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
 const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
 const STATES = ['hover', 'disabled', 'readonly'];
@@ -26,6 +26,9 @@ const HTML_SUBELEMENTS = ['placeholder'];
 
 const CONFIG = {
   components: {
+    Notifications: {
+      exclude: ['height'],
+    },
     Button: {
       exclude: ['width'],
       children: {
@@ -289,7 +292,7 @@ function collectComponents(data, componentSets = []) {
   return componentSets;
 }
 
-function collectChild(variant, children, modifier, component) {
+function collectChildren(variant, children, modifier, component) {
   variant.children
     .filter(child => !CONFIG.components[component]?.children || !CONFIG.components[component]?.children[child.name]?.ignore)
     .forEach(child => {
@@ -313,7 +316,7 @@ function collectChild(variant, children, modifier, component) {
         collectProperties(child, children, childModifier, component, childName);
 
         if (child.children) {
-          collectChild(child, children, childModifier, component);
+          collectChildren(child, children, childModifier, component);
         }
       }
     });
@@ -321,7 +324,6 @@ function collectChild(variant, children, modifier, component) {
 
 function parseComponent(component) {
   const propsMap = [];
-  const children = [];
 
   component.children.forEach(variant => {
     const modifier = getModifier(variant.name, component.name);
@@ -331,7 +333,7 @@ function parseComponent(component) {
     const ignore = CONFIG.components[component.name] && CONFIG.components[component.name].children?.ignore;
 
     if (variant.children && !ignore) {
-      collectChild(variant, propsMap, modifier, component.name);
+      collectChildren(variant, propsMap, modifier, component.name);
     }
   });
 
@@ -482,65 +484,35 @@ function getPrefix(key, component) {
   return STATES.includes(key) && !CONFIG?.components[component]?.statesAsClass?.includes(key) ? ':' : '.';
 }
 
-// function getModifier(variant, component) {
-//   const variantModifiers = variant.name
-//     .split(',')
-//     .map(modifier => modifier.split('='))
-//     .map(modifier => [modifier[0].replace(/\s/g, ''), modifier[1]])
-//     .filter(modifier => {
-//       return modifier[1].toLowerCase() !== 'false' && modifier[0].toLowerCase() !== 'placeholder'
-//     })
-//     .map(modifier => {
-//       const statesAsClass = CONFIG?.components[component]?.statesAsClass;
-//       const modName = lowerCaseFirstLetter(modifier[0]);
-//       const modValue = lowerCaseFirstLetter(modifier[1]);
-//       const prefix = STATES.includes(modName) && !statesAsClass?.includes(modName) ? ':' : '.';
+function filterByConfig(key, config) {
+  if (!config) {
+    return true;
+  }
 
-//       if (modifier[1].toLowerCase() === 'true') {
-//         return `${prefix}${modName}`;
-//       }
+  if (config.exclude) {
+    return !config.exclude.includes(key);
+  }
 
-//       return `${prefix}${modName}-${modValue}`;
-//     })
-//     .join('')
-//     .replace(/\s/g, '');
+  if (config.include) {
+    return config.include.includes(key);
+  }
 
-//   if (!variantModifiers.length) {
-//     return '';
-//   }
+  return true;
+}
 
-//   return `&${variantModifiers}`;
-// }
-
-function collectProperties(variant, propsMap, modifier, component, child = '') {
-  const childName = child.replace('$', '');
-  const configData = child && CONFIG.components[component]?.children ? CONFIG.components[component]?.children[childName] : CONFIG.components[component];
-
-  const variantData = {
-    values: {},
-  };
+function collectBlockProperties(config, variant) {
+  const values = {};
 
   Object.keys(BASE_STYLES_MAP)
-    .filter(key => {
-      if (!configData) {
-        return true;
-      }
-
-      // TODO new method filter
-      if (configData.exclude) {
-        return !configData.exclude.includes(key);
-      }
-
-      if (configData.include) {
-        return configData.include.includes(key);
-      }
-
-      return true;
-    })
+    .filter(key => filterByConfig(key, config))
     .forEach((css) => {
       const data = BASE_STYLES_MAP[css];
       const iconInside = variant.children?.find(item => item.type === 'VECTOR' || item.name.toUpperCase() === 'VECTOR');
       let figmaValue = data.collector(variant);
+
+      if (variant.type === 'VECTOR' && css === 'background') {
+        figmaValue = 'none';
+      }
 
       if (css === 'color' && iconInside) {
         figmaValue = data.collector(iconInside);
@@ -549,45 +521,56 @@ function collectProperties(variant, propsMap, modifier, component, child = '') {
       if (figmaValue || figmaValue === 0) {
         const units = data.units ? data.units : '';
 
-        variantData.values[css] = `${figmaValue}${units}`;
+        values[css] = `${figmaValue}${units}`;
       }
     });
 
-  let textChild = false ? variant : variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
+  return values;
+}
 
-  if (textChild) {
-    Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
-      const figmaValue = data.collector(textChild);
+function collectFontProperties(variant) {
+  const values = {};
 
-      if (figmaValue) {
-        const units = data.units ? data.units : '';
+  Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
+    const figmaValue = data.collector(variant);
 
-        variantData.values[css] = `${figmaValue}${units}`;
-      }
-    });
+    if (figmaValue) {
+      const units = data.units ? data.units : '';
+
+      values[css] = `${figmaValue}${units}`;
+    }
+  });
+
+  return values;
+}
+
+function collectProperties(variant, propsMap, modifier, component, child = null) {
+  const childName = child?.replace('$', '');
+  const config = child && CONFIG.components[component]?.children ? CONFIG.components[component]?.children[childName] : CONFIG.components[component];
+  const isHtmlElement = HTML_ELEMENTS.includes(child);
+
+  const variantData = {
+    values: {},
+    modifier,
+    component: !isHtmlElement ? child : null,
+    element: isHtmlElement ? child : null,
+    variables: config?.variables ? config.variables : null,
+  };
+
+  if (variant.type !== 'TEXT') {
+    variantData.values = collectBlockProperties(config, variant);
+
+    const textChild = variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
+
+    // Add font properties if have text inside
+    if (textChild) {
+      variantData.values = { ...variantData.values, ...collectFontProperties(textChild)};
+    }
+  } else {
+    variantData.values = collectFontProperties(variant);
   }
 
-  const exists = propsMap.find(item => item.modifier === modifier);
-
-  if (!exists) {
-    variantData.modifier = modifier;
-
-    if (configData && configData.variables) {
-      variantData.variables = configData.variables;
-    }
-
-    const isHtmlElement = HTML_ELEMENTS.includes(child);
-
-    if (child && !isHtmlElement) {
-      variantData.component = child;
-    }
-
-    if (isHtmlElement) {
-      variantData.element = child;
-    }
-
-    propsMap.push(variantData);
-  }
+  propsMap.push(variantData);
 }
 
 // Getting all

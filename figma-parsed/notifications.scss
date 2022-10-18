@@ -1,0 +1,52 @@
+// Notifications // -----------------------------
+
+@mixin notifications {
+  width: 400px;
+  padding: 14px 20px 14px 20px;
+  border: none;
+  border-radius: 0;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0px 4px 16px  rgba(0, 0, 0, 0.1599999964237213);
+  flex-direction: column;
+
+  &.type-success {
+    background: rgba(109, 174, 95, 1);
+  }
+
+  &.type-info {
+    background: rgba(137, 146, 156, 1);
+  }
+
+  &.type-error {
+    background: rgba(233, 105, 50, 1);
+  }
+
+  &.type-warning {
+    background: rgba(245, 145, 55, 1);
+  }
+
+  .title {
+    color: rgba(255, 255, 255, 1);
+    font-family: Roboto;
+    line-height: 22px;
+  }
+
+  &.type-info .title,
+  &.type-success .title,
+  &.type-warning .title,
+  &.type-error .title {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  &.type-info,
+  &.type-success,
+  &.type-warning,
+  &.type-error {
+    font-size: 19px;
+    font-weight: 400;
+  }
+
+}

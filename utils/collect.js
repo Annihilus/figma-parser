@@ -6,15 +6,15 @@ const TEXT_TRANSFORM = {
 }
 
 const POSITIONS_VERTICAL = {
-  MAX: 'bottom',
+  MAX: 'flex-end',
   CENTER: 'center',
   default: 'flex-start',
 }
 
 const POSITIONS_HORIZONTAL = {
-  MAX: 'right',
+  MAX: 'flex-end',
   CENTER: 'center',
-  default: 'left',
+  default: 'flex-start',
 }
 
 const DIRECTION = {
@@ -23,6 +23,7 @@ const DIRECTION = {
 }
 
 export function collectWidth(variant) {
+  console.log(variant);
   // if (variant.primaryAxisSizingMode === 'FIXED') {
     return `${variant.absoluteBoundingBox.width}px`;
   // }
@@ -65,8 +66,6 @@ export function collectBackground(variant) {
 
     if (bg.type === 'SOLID') {
       return colorToRgba(bg.color);
-    } else {
-      // return cssGradient(bg);
     }
   }
 

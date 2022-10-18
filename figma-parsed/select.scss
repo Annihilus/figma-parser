@@ -1,16 +1,21 @@
 // Select // -----------------------------
 
 @mixin select {
-  font-family: Roboto;
-  line-height: 22px;
-  font-size: 16px;
-  font-weight: 400;
+
 
   &.closeIcon.selected .Dropdown {
     height: 109px;
     padding: 8px 8px 8px 8px;
     box-shadow: 0px 2px 10px  rgba(0, 0, 0, 0.11999999731779099);
     flex-direction: column;
+  }
+
+  &.filled.closeIcon .iw-iconVector,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.closeIcon.selected .Select .iw-iconVector {
+    height: 13.3333740234375px;
   }
 
   &.closeIcon.selected {
@@ -20,50 +25,19 @@
   &.placeholder .iw-icon,
   &.placeholder:disabled .iw-icon,
   &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-icon,
+  &.closeIcon.error .iw-icon,
   &.closeIcon.error .iw-icon,
   &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-icon,
   &.filled:disabled .iw-icon,
+  &.filled.closeIcon:hover .iw-icon,
   &.filled.closeIcon:hover .iw-icon,
   &.placeholder:hover .iw-icon,
   &.closeIcon.selected .Select .iw-icon,
   &.closeIcon.selected .Select .platformUpChevron {
     height: 16px;
     background: transparent;
-  }
-
-  &.placeholder,
-  &.placeholder::placeholder,
-  &.placeholder:disabled,
-  &.placeholder:disabled::placeholder,
-  &.filled.closeIcon,
-  &.closeIcon.error,
-  &.closeIcon:hover.error,
-  &.filled:disabled,
-  &.filled.closeIcon:hover,
-  &.placeholder:hover,
-  &.placeholder:hover::placeholder,
-  &.closeIcon.selected .Select,
-  &.closeIcon.selected .Select .Content {
-    height: 36px;
-  }
-
-  &.placeholder::placeholder,
-  &.placeholder .iw-icon,
-  &.placeholder:disabled::placeholder,
-  &.placeholder:disabled .iw-icon,
-  &.filled.closeIcon .iw-icon,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon:hover.error .iw-icon,
-  &.filled:disabled .iw-icon,
-  &.filled.closeIcon:hover .iw-icon,
-  &.placeholder:hover::placeholder,
-  &.placeholder:hover .iw-icon,
-  &.closeIcon.selected,
-  &.closeIcon.selected .Select .Content,
-  &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .platformUpChevron {
-    padding: 0px 0px 0px 0px;
-    border-radius: 0;
   }
 
   &.placeholder,
@@ -75,11 +49,56 @@
   &.filled.closeIcon:hover,
   &.placeholder:hover,
   &.closeIcon.selected .Select {
+    height: 36px;
     padding: 0px 8px 0px 8px;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     flex-direction: row;
+  }
+
+  &.placeholder .iw-iconVector,
+  &.placeholder:disabled .iw-iconVector,
+  &.filled.closeIcon .iw-iconVector,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.filled:disabled .iw-iconVector,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.placeholder:hover .iw-iconVector,
+  &.closeIcon.selected .Select .platformUpChevronVector {
+    height: 6.6728515625px;
+  }
+
+  &.placeholder .iw-icon,
+  &.placeholder .iw-iconVector,
+  &.placeholder:disabled .iw-icon,
+  &.placeholder:disabled .iw-iconVector,
+  &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
+  &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
+  &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.filled:disabled .iw-icon,
+  &.filled:disabled .iw-iconVector,
+  &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.placeholder:hover .iw-icon,
+  &.placeholder:hover .iw-iconVector,
+  &.closeIcon.selected,
+  &.closeIcon.selected .Select .iw-icon,
+  &.closeIcon.selected .Select .iw-iconVector,
+  &.closeIcon.selected .Select .platformUpChevron,
+  &.closeIcon.selected .Select .platformUpChevronVector {
+    padding: 0px 0px 0px 0px;
+    border-radius: 0;
   }
 
   &.filled.closeIcon,
@@ -100,25 +119,38 @@
     border: 1px solid rgba(229, 229, 229, 1);
   }
 
-  &.placeholder::placeholder,
   &.placeholder .iw-icon,
-  &.placeholder:disabled::placeholder,
+  &.placeholder .iw-iconVector,
   &.placeholder:disabled .iw-icon,
+  &.placeholder:disabled .iw-iconVector,
   &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
+  &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
   &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
   &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
   &.filled:disabled .iw-icon,
+  &.filled:disabled .iw-iconVector,
   &.filled.closeIcon:hover .iw-icon,
-  &.placeholder:hover::placeholder,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector,
   &.placeholder:hover .iw-icon,
+  &.placeholder:hover .iw-iconVector,
   &.closeIcon.selected,
-  &.closeIcon.selected .Select .Content,
   &.closeIcon.selected .Select .iw-icon,
+  &.closeIcon.selected .Select .iw-iconVector,
   &.closeIcon.selected .Select .platformUpChevron,
+  &.closeIcon.selected .Select .platformUpChevronVector,
   &.closeIcon.selected .Dropdown {
     border: none;
     align-items: flex-start;
-    justify-content: left;
     gap: 0px;
   }
 
@@ -135,18 +167,26 @@
     border-radius: 2px;
   }
 
+  &.placeholder .iw-iconVector,
+  &.placeholder:disabled .iw-iconVector,
+  &.filled.closeIcon .iw-iconVector,
+  &.filled.closeIcon .iw-iconVector,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.filled:disabled .iw-iconVector,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.placeholder:hover .iw-iconVector,
+  &.closeIcon.selected .Select .iw-iconVector,
+  &.closeIcon.selected .Select .platformUpChevronVector {
+    background: none;
+  }
+
   &.closeIcon.selected .Select {
     background: rgba(0, 140, 70, 1);
     color: rgba(0, 140, 70, 1);
-  }
-
-  &.placeholder::placeholder,
-  &.placeholder:hover::placeholder {
-    background: rgba(132, 132, 132, 1);
-  }
-
-  &.placeholder:disabled::placeholder {
-    background: rgba(204, 204, 204, 1);
   }
 
   &.placeholder,
@@ -162,69 +202,111 @@
   &.filled:disabled,
   &.filled.closeIcon:hover,
   &.closeIcon.selected,
-  &.closeIcon.selected .Select .Content,
   &.closeIcon.selected .Dropdown {
     background: rgba(255, 255, 255, 1);
   }
 
+  .Dropdown {
+    justify-content: left;
+  }
+
   &.placeholder,
-  &.placeholder::placeholder,
   &.placeholder .iw-icon,
+  &.placeholder .iw-iconVector,
   &.placeholder:disabled,
-  &.placeholder:disabled::placeholder,
   &.placeholder:disabled .iw-icon,
+  &.placeholder:disabled .iw-iconVector,
   &.filled.closeIcon,
   &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
+  &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
   &.closeIcon.error,
   &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
   &.closeIcon:hover.error,
   &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
   &.filled:disabled,
   &.filled:disabled .iw-icon,
+  &.filled:disabled .iw-iconVector,
   &.filled.closeIcon:hover,
   &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector,
   &.placeholder:hover,
-  &.placeholder:hover::placeholder,
   &.placeholder:hover .iw-icon,
+  &.placeholder:hover .iw-iconVector,
   &.closeIcon.selected,
   &.closeIcon.selected .Select,
-  &.closeIcon.selected .Select .Content,
   &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .platformUpChevron {
+  &.closeIcon.selected .Select .iw-iconVector,
+  &.closeIcon.selected .Select .platformUpChevron,
+  &.closeIcon.selected .Select .platformUpChevronVector {
     box-shadow: none;
   }
 
   &.filled.closeIcon,
   &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
+  &.filled.closeIcon .iw-icon,
+  &.filled.closeIcon .iw-iconVector,
   &.closeIcon.error,
   &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
+  &.closeIcon.error .iw-icon,
+  &.closeIcon.error .iw-iconVector,
   &.closeIcon:hover.error,
   &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
+  &.closeIcon:hover.error .iw-icon,
+  &.closeIcon:hover.error .iw-iconVector,
   &.filled.closeIcon:hover,
-  &.filled.closeIcon:hover .iw-icon {
+  &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector,
+  &.filled.closeIcon:hover .iw-icon,
+  &.filled.closeIcon:hover .iw-iconVector {
     color: rgba(0, 0, 0, 1);
   }
 
   &.placeholder::placeholder,
   &.placeholder .iw-icon,
+  &.placeholder .iw-iconVector,
   &.filled:disabled,
   &.placeholder:hover::placeholder,
-  &.placeholder:hover .iw-icon {
+  &.placeholder:hover .iw-icon,
+  &.placeholder:hover .iw-iconVector {
     color: rgba(132, 132, 132, 1);
   }
 
   &.placeholder:disabled::placeholder,
   &.placeholder:disabled .iw-icon,
-  &.filled:disabled .iw-icon {
+  &.placeholder:disabled .iw-iconVector,
+  &.filled:disabled .iw-icon,
+  &.filled:disabled .iw-iconVector {
     color: rgba(204, 204, 204, 1);
   }
 
   &.closeIcon.selected,
   &.closeIcon.selected .Select .Content,
   &.closeIcon.selected .Select .iw-icon,
+  &.closeIcon.selected .Select .iw-iconVector,
   &.closeIcon.selected .Select .platformUpChevron,
+  &.closeIcon.selected .Select .platformUpChevronVector,
   &.closeIcon.selected .Dropdown {
     color: rgba(255, 255, 255, 1);
+  }
+
+  .Content {
+    font-family: Roboto;
+    line-height: 22px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
 }

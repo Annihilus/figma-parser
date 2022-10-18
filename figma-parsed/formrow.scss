@@ -8,6 +8,7 @@
   &.hint.error.direction-horizontal .label,
   &.error.direction-horizontal .label {
     width: 150px;
+    justify-content: right;
   }
 
   &.hint.direction-vertical .label,
@@ -16,7 +17,6 @@
   &.error.direction-vertical .label {
     width: 350px;
     align-items: center;
-    justify-content: center;
   }
 
   .label {
@@ -70,6 +70,20 @@
   &.hint.error.direction-vertical,
   &.error.direction-vertical {
     align-items: flex-start;
+  }
+
+  &.hint.direction-horizontal,
+  &.direction-horizontal,
+  &.hint.error.direction-horizontal,
+  &.error.direction-horizontal,
+  &.hint.direction-vertical,
+  &.hint.direction-vertical .label,
+  &.direction-vertical,
+  &.direction-vertical .label,
+  &.hint.error.direction-vertical,
+  &.hint.error.direction-vertical .label,
+  &.error.direction-vertical,
+  &.error.direction-vertical .label {
     justify-content: left;
   }
 

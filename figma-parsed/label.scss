@@ -5,31 +5,15 @@
   border: none;
   border-radius: 0;
   background: transparent;
+  align-items: center;
+  justify-content: right;
+  gap: 3px;
   box-shadow: none;
   flex-direction: row;
   font-family: Roboto;
   line-height: 36px;
   font-size: 15px;
   font-weight: 400;
-
-  &.type-required.status-default,
-  &.type-default.status-default,
-  &.type-required.status-error,
-  &.type-default.status-error,
-  &.type-required.status-disabled,
-  &.type-default.status-disabled {
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-  }
-
-  &.type-required.status-default .required,
-  &.type-required.status-error .required,
-  &.type-required.status-disabled .required {
-    align-items: flex-start;
-    justify-content: left;
-    gap: 0px;
-  }
 
   &.type-required.status-disabled,
   &.type-required.status-disabled .required,

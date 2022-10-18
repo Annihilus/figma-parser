@@ -14,6 +14,30 @@
   color: rgba(255, 255, 255, 1);
   flex-direction: row;
 
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
+    width: 11.70703125px;
+    height: 11.70709228515625px;
+  }
+
+  &.except .iw-iconVector,
+  &:hover.except .iw-iconVector,
+  &.disabled.except .iw-iconVector {
+    width: 12.0037841796875px;
+    height: 11.987503051757812px;
+  }
+
+  &.checked .iw-iconVector,
+  &:hover.checked .iw-iconVector,
+  &.disabled.checked .iw-iconVector {
+    width: 12.7474365234375px;
+    height: 9.834823608398438px;
+  }
+
   &.indeterminate.indeterminateType-checkedType .partialElement,
   &:hover.indeterminate.indeterminateType-checkedType .partialElement,
   &.disabled.indeterminate.indeterminateType-checkedType .partialElement,
@@ -23,6 +47,13 @@
     width: 12px;
     height: 12px;
     border-radius: 1px;
+  }
+
+  &.readonly .iw-iconVector,
+  &:hover.readonly .iw-iconVector,
+  &.disabled.readonly .iw-iconVector {
+    width: 16px;
+    height: 10px;
   }
 
   &.checked,
@@ -52,7 +83,7 @@
     height: 20px;
   }
 
-  .platformCheckboxMixed2 {
+  .Vector {
     padding: 0px 0px 0px 0px;
     gap: 0px;
     box-shadow: none;
@@ -84,24 +115,72 @@
     justify-content: center;
   }
 
+  &.checked .iw-iconVector,
+  &.readonly .iw-iconVector,
+  &.except .iw-iconVector,
+  &:hover.except .iw-iconVector,
+  &:hover.readonly .iw-iconVector,
   &.indeterminate.indeterminateType-checkedType .partialElement,
   &:hover.indeterminate.indeterminateType-checkedType .partialElement,
+  &:hover.checked .iw-iconVector,
+  &.disabled.checked .iw-iconVector,
   &.disabled.indeterminate.indeterminateType-checkedType .partialElement,
   &.indeterminate.indeterminateType-exceptedType .partialElement,
   &:hover.indeterminate.indeterminateType-exceptedType .partialElement,
   &.disabled.indeterminate.indeterminateType-exceptedType .partialElement,
+  &.disabled.readonly .iw-iconVector,
+  &.disabled.except .iw-iconVector,
   &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
   &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
-  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2 {
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
     border: none;
     align-items: flex-start;
     justify-content: left;
   }
 
+  &.checked .iw-iconVector,
+  &.readonly .iw-iconVector,
+  &.except .iw-iconVector,
+  &:hover.except .iw-iconVector,
+  &:hover.readonly .iw-iconVector,
+  &:hover.checked .iw-iconVector,
+  &.disabled.checked .iw-iconVector,
+  &.disabled.readonly .iw-iconVector,
+  &.disabled.except .iw-iconVector,
   &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
   &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
-  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2 {
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
     border-radius: 0;
+  }
+
+  &.checked .iw-iconVector,
+  &.readonly .iw-iconVector,
+  &.except .iw-iconVector,
+  &:hover.except .iw-iconVector,
+  &:hover.readonly .iw-iconVector,
+  &:hover.checked .iw-iconVector,
+  &.disabled.checked .iw-iconVector,
+  &.disabled.readonly .iw-iconVector,
+  &.disabled.except .iw-iconVector,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
+    background: none;
   }
 
   &.indeterminate.indeterminateType-checkedType .partialElement,
@@ -116,7 +195,6 @@
   &.indeterminate.indeterminateType-exceptedType .partialElement,
   &:hover.indeterminate.indeterminateType-exceptedType .partialElement {
     background: rgba(193, 64, 49, 1);
-    color: rgba(193, 64, 49, 1);
   }
 
   &.disabled.indeterminate.indeterminateType-exceptedType .partialElement {
@@ -158,31 +236,49 @@
   }
 
   &.checked .iw-icon,
+  &.checked .iw-iconVector,
   &.indeterminate.indeterminateType-checkedType .partialElement,
   &:hover.indeterminate.indeterminateType-checkedType .partialElement,
   &:hover.checked .iw-icon,
+  &:hover.checked .iw-iconVector,
   &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
-  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2 {
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
     color: rgba(0, 125, 50, 1);
   }
 
   &.disabled.checked .iw-icon,
+  &.disabled.checked .iw-iconVector,
   &.disabled.indeterminate.indeterminateType-checkedType .partialElement,
-  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2 {
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
     color: rgba(128, 197, 162, 1);
   }
 
-  &.disabled.readonly .iw-icon {
+  &.disabled.readonly .iw-icon,
+  &.disabled.readonly .iw-iconVector {
     color: rgba(148, 176, 208, 1);
   }
 
+  &.indeterminate.indeterminateType-exceptedType .partialElement,
+  &:hover.indeterminate.indeterminateType-exceptedType .partialElement,
+  &:hover.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
+    color: rgba(193, 64, 49, 1);
+  }
+
   &.except .iw-icon,
-  &:hover.except .iw-icon {
+  &.except .iw-iconVector,
+  &:hover.except .iw-icon,
+  &:hover.except .iw-iconVector,
+  &.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
     color: rgba(207, 69, 52, 1);
   }
 
   &.disabled.indeterminate.indeterminateType-exceptedType .partialElement,
-  &.disabled.except .iw-icon {
+  &.disabled.except .iw-icon,
+  &.disabled.except .iw-iconVector,
+  &.disabled.indeterminate.indeterminateType-mixedType .platformCheckboxMixed2Vector {
     color: rgba(217, 132, 122, 1);
   }
 
@@ -203,7 +299,9 @@
   }
 
   &.readonly .iw-icon,
-  &:hover.readonly .iw-icon {
+  &.readonly .iw-iconVector,
+  &:hover.readonly .iw-icon,
+  &:hover.readonly .iw-iconVector {
     color: rgba(70, 131, 201, 1);
   }
 
