@@ -15,8 +15,8 @@ import {
   collectTextTransform,
 } from './utils/collect.js';
 
-const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
-// const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
+// const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
+const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
 const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
 const STATES = ['hover', 'disabled', 'readonly'];
@@ -27,10 +27,8 @@ const HTML_SUBELEMENTS = ['placeholder'];
 const CONFIG = {
   components: {
     Notifications: {
-      exclude: ['height'],
     },
     Button: {
-      exclude: ['width'],
       children: {
         spinner: {
           include: ['width', 'height', 'color', 'padding'],
@@ -49,7 +47,6 @@ const CONFIG = {
       }
     },
     Label: {
-      exclude: ['width', 'height'],
       children: {
         required: {
           exclude: ['width', 'height', 'padding', 'background'],
@@ -82,11 +79,7 @@ const CONFIG = {
       }
     },
     Input: {
-      exclude: ['width'],
       children: {
-        input: {
-          exclude: ['width', 'height'],
-        },
         placeholder: {
           include: ['color'],
         },
@@ -149,7 +142,6 @@ const CONFIG = {
       },
     },
     FormRow: {
-      exclude: ['width', 'height'],
       children: {
         HintedElement: {
           ignore: true,
@@ -160,7 +152,6 @@ const CONFIG = {
       },
     },
     Select: {
-      exclude: ['width'],
       statesAsClass: ['placeholder'],
     }
   },
@@ -195,10 +186,10 @@ const FONT_STYLES_MAP = {
 
 const BASE_STYLES_MAP = {
   'width': {
-    collector: collectWidth,
+    collector: (variant, parent) => collectWidth(variant, parent),
   },
   'height': {
-    collector: collectHeight,
+    collector: (variant, parent) => collectHeight(variant, parent),
   },
   'padding': {
     collector: collectPadding,
@@ -216,7 +207,7 @@ const BASE_STYLES_MAP = {
     collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'vertical'),
   },
   'justify-content': {
-    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'horizontal'),
+    collector: (variant) => collectAlign(variant.primaryAxisAlignItems, 'horizontal'),
   },
   'gap': {
     collector: (variant) => `${variant.itemSpacing || 0}px`,
@@ -313,7 +304,7 @@ function collectChildren(variant, children, modifier, component) {
           childModifier = `${modifier}::placeholder`;
         }
 
-        collectProperties(child, children, childModifier, component, childName);
+        collectProperties(child, children, childModifier, component, childName, variant);
 
         if (child.children) {
           collectChildren(child, children, childModifier, component);
@@ -428,8 +419,9 @@ function parse(props) {
 
             // TODO this dont work properly
             if (count === sortedByProp.length - 1) {
+              // CHECK THIS
               if (component) {
-                modifier = componentSelector;
+                // modifier = componentSelector;
               } else if (htmlElement) {
                 modifier = htmlElement;
               } else {
@@ -500,15 +492,17 @@ function filterByConfig(key, config) {
   return true;
 }
 
-function collectBlockProperties(config, variant) {
+function collectBlockProperties(config, variant, parent) {
   const values = {};
+
+  console.log(variant.name);
 
   Object.keys(BASE_STYLES_MAP)
     .filter(key => filterByConfig(key, config))
     .forEach((css) => {
       const data = BASE_STYLES_MAP[css];
       const iconInside = variant.children?.find(item => item.type === 'VECTOR' || item.name.toUpperCase() === 'VECTOR');
-      let figmaValue = data.collector(variant);
+      let figmaValue = data.collector(variant, parent);
 
       if (variant.type === 'VECTOR' && css === 'background') {
         figmaValue = 'none';
@@ -544,7 +538,7 @@ function collectFontProperties(variant) {
   return values;
 }
 
-function collectProperties(variant, propsMap, modifier, component, child = null) {
+function collectProperties(variant, propsMap, modifier, component, child = null, parent) {
   const childName = child?.replace('$', '');
   const config = child && CONFIG.components[component]?.children ? CONFIG.components[component]?.children[childName] : CONFIG.components[component];
   const isHtmlElement = HTML_ELEMENTS.includes(child);
@@ -558,7 +552,7 @@ function collectProperties(variant, propsMap, modifier, component, child = null)
   };
 
   if (variant.type !== 'TEXT') {
-    variantData.values = collectBlockProperties(config, variant);
+    variantData.values = collectBlockProperties(config, variant, parent);
 
     const textChild = variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
 
@@ -570,7 +564,11 @@ function collectProperties(variant, propsMap, modifier, component, child = null)
     variantData.values = collectFontProperties(variant);
   }
 
-  propsMap.push(variantData);
+  const exists = propsMap.find(item => item.modifier === modifier);
+
+  if (!exists) {
+    propsMap.push(variantData);
+  }
 }
 
 // Getting all

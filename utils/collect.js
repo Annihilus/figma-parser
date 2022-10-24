@@ -22,19 +22,30 @@ const DIRECTION = {
   HORIZONTAL: 'row',
 }
 
-export function collectWidth(variant) {
-  console.log(variant);
-  // if (variant.primaryAxisSizingMode === 'FIXED') {
+export function collectWidth(variant, parent) {
+  const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
+
+  if (variant.layoutAlign === 'STRETCH') {
+    return '100%';
+  }
+
+  const axis = source.layoutMode === 'VERTICAL' ? source.counterAxisSizingMode : source.primaryAxisSizingMode;
+
+  if (axis === 'FIXED') {
     return `${variant.absoluteBoundingBox.width}px`;
-  // }
+  }
 
   return 'auto';
 }
 
-export function collectHeight(variant) {
-  // if (variant.counterAxisSizingMode === 'FIXED') {
+export function collectHeight(variant, parent) {
+  const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
+
+  const axis = source.layoutMode === 'VERTICAL' ? source.primaryAxisSizingMode : source.counterAxisSizingMode;
+
+  if (axis === 'FIXED') {
     return `${variant.absoluteBoundingBox.height}px`;
-  // }
+  }
 
   return 'auto';
 }
