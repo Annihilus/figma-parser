@@ -1,5 +1,5 @@
 {
-  "name": "figma-parser",
+  "name": "figma-to-scss",
   "version": "1.0.0",
   "description": "Library for parsing figma files and creating css variables from data",
   "main": "index.js",
@@ -12,5 +12,17 @@
   "dependencies": {
     "node-fetch": "^3.2.3",
     "request": "^2.88.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Annihilus/figma-parser.git"
+  },
+  "keywords": [
+    "figma"
+  ],
+  "bugs": {
+    "url": "https://github.com/Annihilus/figma-parser/issues"
+  },
+  "homepage": "https://github.com/Annihilus/figma-parser#readme"
 }
