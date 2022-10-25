@@ -29,7 +29,13 @@ export function collectWidth(variant, parent) {
     return '100%';
   }
 
-  const axis = source.layoutMode === 'VERTICAL' ? source.counterAxisSizingMode : source.primaryAxisSizingMode;
+  let axis = '';
+
+  if (source.layoutMode === 'VERTICAL') {
+    axis = source.counterAxisSizingMode || variant.counterAxisSizingMode;
+  } else {
+    axis = source.primaryAxisSizingMode || variant.primaryAxisSizingMode;
+  }
 
   if (axis === 'FIXED') {
     return `${variant.absoluteBoundingBox.width}px`;

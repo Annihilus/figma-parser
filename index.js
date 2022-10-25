@@ -495,8 +495,6 @@ function filterByConfig(key, config) {
 function collectBlockProperties(config, variant, parent) {
   const values = {};
 
-  console.log(variant.name);
-
   Object.keys(BASE_STYLES_MAP)
     .filter(key => filterByConfig(key, config))
     .forEach((css) => {
