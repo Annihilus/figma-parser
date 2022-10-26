@@ -47,7 +47,17 @@ export function collectWidth(variant, parent) {
 export function collectHeight(variant, parent) {
   const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
 
-  const axis = source.layoutMode === 'VERTICAL' ? source.primaryAxisSizingMode : source.counterAxisSizingMode;
+  if (variant.layoutAlign === 'STRETCH') {
+    return '100%';
+  }
+
+  let axis = '';
+
+  if (source.layoutMode === 'VERTICAL') {
+    axis = source.primaryAxisSizingMode || variant.primaryAxisSizingMode;
+  } else {
+    axis = source.counterAxisSizingMode || variant.counterAxisSizingMode;
+  }
 
   if (axis === 'FIXED') {
     return `${variant.absoluteBoundingBox.height}px`;

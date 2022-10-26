@@ -15,8 +15,8 @@ import {
   collectTextTransform,
 } from './utils/collect.js';
 
-// const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
-const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
+const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
+// const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
 const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
 const STATES = ['hover', 'disabled', 'readonly'];
@@ -153,7 +153,8 @@ const CONFIG = {
     },
     Select: {
       statesAsClass: ['placeholder'],
-    }
+    },
+    SelectItem: {},
   },
 }
 
@@ -185,50 +186,50 @@ const FONT_STYLES_MAP = {
 }
 
 const BASE_STYLES_MAP = {
-  'width': {
-    collector: (variant, parent) => collectWidth(variant, parent),
-  },
-  'height': {
-    collector: (variant, parent) => collectHeight(variant, parent),
-  },
-  'padding': {
-    collector: collectPadding,
-  },
-  'border': {
-    collector: collectBorder,
-  },
-  'border-radius': {
-    collector: collectBorderRadius,
-  },
-  'background': {
-    collector: collectBackground,
-  },
+  // 'width': {
+  //   collector: (variant, parent) => collectWidth(variant, parent),
+  // },
+  // 'height': {
+  //   collector: (variant, parent) => collectHeight(variant, parent),
+  // },
+  // 'padding': {
+  //   collector: collectPadding,
+  // },
+  // 'border': {
+  //   collector: collectBorder,
+  // },
+  // 'border-radius': {
+  //   collector: collectBorderRadius,
+  // },
+  // 'background': {
+  //   collector: collectBackground,
+  // },
   'align-items': {
     collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'vertical'),
   },
-  'justify-content': {
-    collector: (variant) => collectAlign(variant.primaryAxisAlignItems, 'horizontal'),
-  },
-  'gap': {
-    collector: (variant) => `${variant.itemSpacing || 0}px`,
-  },
-  'box-shadow': {
-    collector: collectShadow,
-  },
-  'transition': {
-    collector: collectTransition,
-  },
-  'color': {
-    collector: collectColor,
-  },
-  'flex-direction': {
-    collector: (variant) => collectDirection(variant),
-  },
+  // 'justify-content': {
+  //   collector: (variant) => collectAlign(variant.primaryAxisAlignItems, 'horizontal'),
+  // },
+  // 'gap': {
+  //   collector: (variant) => `${variant.itemSpacing || 0}px`,
+  // },
+  // 'box-shadow': {
+  //   collector: collectShadow,
+  // },
+  // 'transition': {
+  //   collector: collectTransition,
+  // },
+  // 'color': {
+  //   collector: collectColor,
+  // },
+  // 'flex-direction': {
+  //   collector: (variant) => collectDirection(variant),
+  // },
 }
 
 const STYLES = {
   ...BASE_STYLES_MAP,
-  ...FONT_STYLES_MAP,
+  // ...FONT_STYLES_MAP,
 }
 
 async function fetchFigma(path) {
@@ -288,7 +289,7 @@ function collectChildren(variant, children, modifier, component) {
     .filter(child => !CONFIG.components[component]?.children || !CONFIG.components[component]?.children[child.name]?.ignore)
     .forEach(child => {
       if (child.name !== 'text' && child.visible !== false) {
-        let childName = child.name.startsWith('$') ? child.name.split('-')[0] : child.name;
+        let childName = child.name.startsWith('$') ? child.name.split('-')[0].replace('$', 'iw-') : child.name;
         const isHtmlElement = HTML_ELEMENTS.includes(childName);
         let prefix = !isHtmlElement ? ' .' : ' ';
 
@@ -367,7 +368,11 @@ function parse(props) {
       let value = null;
       let count = 0;
 
+      // console.log(sortedByProp);
+
       if (sortedByProp.length === 1) {
+        console.log('L:L:');
+
         modifier = sortedByProp[0].component ? `.${sortedByProp[0].component}` : modifier;
 
         if (!result[modifier]) {
@@ -377,6 +382,9 @@ function parse(props) {
         result[modifier][key] = sortedByProp[0].values[key];
       } else {
         for (let i = 0; i < sortedByProp.length; i++) {
+          const component = sortedByProp[i].component;
+
+          // Generating variable instead of mixin
           if (sortedByProp[i].variables && sortedByProp[i].variables[key]) {
             const variable = generateVariable(sortedByProp[i], key);
 
@@ -385,8 +393,9 @@ function parse(props) {
             continue;
           }
 
+          // Setting first modifier
           if (!modifier.length) {
-            modifier = sortedByProp[i].modifier;
+            modifier = component ? `.${component}` : sortedByProp[i].modifier;
           }
 
           // TODO add no value
@@ -399,6 +408,9 @@ function parse(props) {
 
             // If exists next item with same value, we extends out modifier by new modifier
             if (sortedByProp[i + 1]?.modifier) {
+              console.log('TTT', modifier);
+
+
               if (!modifier.length) {
                 if (!result[modifier]) {
                   result[modifier] = {};
@@ -413,7 +425,6 @@ function parse(props) {
               modifier = `&,${modifier}`;
             }
           } else {
-            const component = sortedByProp[i].component;
             const htmlElement = sortedByProp[i].element;
             const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
 
@@ -421,7 +432,7 @@ function parse(props) {
             if (count === sortedByProp.length - 1) {
               // CHECK THIS
               if (component) {
-                // modifier = componentSelector;
+                modifier = componentSelector;
               } else if (htmlElement) {
                 modifier = htmlElement;
               } else {
@@ -430,6 +441,8 @@ function parse(props) {
             }
 
             value = value || sortedByProp[i].values[key];
+
+            console.log(modifier, value, 'FINAL');
 
             if (value) {
               if (!result[modifier]) {
@@ -578,6 +591,7 @@ function createMixin(data, component) {
   let variables = '';
 
   Object.keys(data).forEach(key => {
+    // TODO another key for icons
     if (key.startsWith('$')) {
       variables += `${key}: ${data[key]};\n`;
 
@@ -605,8 +619,7 @@ function createMixin(data, component) {
     keyParts.forEach((part, index) => {
       const spaces = '  ';
 
-      part = part.startsWith('$') ? `.${part}` : part;
-      part = part.replace('$', 'iw-');
+      part = part.startsWith('iw-') ? `.${part}` : part;
 
 
       keyString += keyParts.length !== index + 1 ? `${spaces}${part},\n` : `${spaces}${part}`;
