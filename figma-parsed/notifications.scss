@@ -1,52 +1,106 @@
 // Notifications // -----------------------------
 
 @mixin notifications {
-  width: 400px;
-  padding: 14px 20px 14px 20px;
-  border: none;
-  border-radius: 0;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0px 4px 16px  rgba(0, 0, 0, 0.1599999964237213);
-  flex-direction: column;
+  background: rgba(245, 145, 55, 1);
 
-  &.type-success {
-    background: rgba(109, 174, 95, 1);
+  &.type-info .Header,
+  &.type-success .Header,
+  &.type-warning .Header {
+    width: 100%;
+    align-items: center;
+    flex-direction: row;
   }
 
-  &.type-info {
-    background: rgba(137, 146, 156, 1);
-  }
-
-  &.type-error {
-    background: rgba(233, 105, 50, 1);
-  }
-
-  &.type-warning {
-    background: rgba(245, 145, 55, 1);
-  }
-
-  .title {
-    color: rgba(255, 255, 255, 1);
-    font-family: Roboto;
-    line-height: 22px;
-  }
-
-  &.type-info .title,
-  &.type-success .title,
-  &.type-warning .title,
-  &.type-error .title {
-    font-size: 15px;
-    font-weight: 500;
+  &.type-info .Header .iw-icon,
+  &.type-success .Header .iw-icon,
+  &.type-warning .Header .iw-icon {
+    width: 14px;
   }
 
   &.type-info,
   &.type-success,
-  &.type-warning,
-  &.type-error {
+  &.type-warning {
+    width: 400px;
+    padding: 14px 20px 14px 20px;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0px 4px 16px  rgba(0, 0, 0, 0.1599999964237213);
+    flex-direction: column;
+    line-height: 24px;
     font-size: 19px;
     font-weight: 400;
+  }
+
+  &.type-info,
+  &.type-info .Header,
+  &.type-info .Header .iw-icon,
+  &.type-success,
+  &.type-success .Header,
+  &.type-success .Header .iw-icon,
+  &.type-warning,
+  &.type-warning .Header,
+  &.type-warning .Header .iw-icon,
+  &.type-error,
+  &.type-error .Header {
+    height: auto;
+    border: none;
+    border-radius: 0;
+  }
+
+  &.type-info .Header,
+  &.type-info .Header .iw-icon,
+  &.type-success .Header,
+  &.type-success .Header .iw-icon,
+  &.type-warning .Header,
+  &.type-warning .Header .iw-icon,
+  &.type-error .Header {
+    padding: 0px 0px 0px 0px;
+    background: transparent;
+    justify-content: flex-start;
+    gap: 0px;
+    box-shadow: none;
+  }
+
+  &.type-info,
+  &.type-info .Header .iw-icon,
+  &.type-success,
+  &.type-success .Header .iw-icon,
+  &.type-warning,
+  &.type-warning .Header .iw-icon,
+  &.type-error {
+    align-items: flex-start;
+  }
+
+  &.type-info,
+  &.type-info .Header .title,
+  &.type-info .Header .iw-icon,
+  &.type-success,
+  &.type-success .Header .title,
+  &.type-success .Header .iw-icon,
+  &.type-warning,
+  &.type-warning .Header .title,
+  &.type-warning .Header .iw-icon,
+  &.type-error,
+  &.type-error .Header .title {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  &.type-info,
+  &.type-info .Header .title,
+  &.type-success,
+  &.type-success .Header .title,
+  &.type-warning,
+  &.type-warning .Header .title,
+  &.type-error {
+    font-family: Roboto;
+  }
+
+  &.type-info .Header .title,
+  &.type-success .Header .title,
+  &.type-warning .Header .title {
+    line-height: 22px;
+    font-size: 15px;
+    font-weight: 500;
   }
 
 }

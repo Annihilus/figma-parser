@@ -1,28 +1,25 @@
 // FormBlock // -----------------------------
 
 @mixin formBlock {
+  background: rgba(255, 255, 255, 1);
+  gap: 12px;
   color: rgba(0, 0, 0, 1);
   font-family: Roboto;
   line-height: 22px;
   font-size: 16px;
   font-weight: 400;
 
-  .content {
+  &.default {
     padding: 0px 0px 0px 0px;
     border: none;
     border-radius: 0;
     align-items: flex-start;
-    justify-content: left;
+    justify-content: flex-start;
     box-shadow: none;
     flex-direction: column;
   }
 
-  &.default {
-    background: rgba(255, 255, 255, 1);
-    gap: 12px;
-  }
-
-  &.default .content {
+  content {
     background: transparent;
     gap: 14px;
   }

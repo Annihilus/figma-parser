@@ -1,22 +1,18 @@
 // CheckboxGroup // -----------------------------
 
 @mixin checkboxGroup {
-  padding: 0px 0px 0px 0px;
-  border: none;
-  border-radius: 0;
-  background: rgba(255, 255, 255, 1);
-  align-items: flex-start;
-  justify-content: left;
-  gap: 10px;
-  box-shadow: none;
-  color: rgba(255, 255, 255, 1);
-
-  &.direction-vertical {
-    flex-direction: column;
-  }
+  flex-direction: row;
 
   &.direction-horizontal {
-    flex-direction: row;
+    padding: 0px 0px 0px 0px;
+    border: none;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 1);
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    box-shadow: none;
+    color: rgba(255, 255, 255, 1);
   }
 
 }

@@ -1,12 +1,8 @@
 // Radiobutton // -----------------------------
 
 @mixin radiobutton {
-  padding: 0px 0px 0px 0px;
-  gap: 0px;
-  box-shadow: none;
-  flex-direction: row;
 
-  &,
+
   &.checked,
   &:hover.checked,
   &:hover,
@@ -17,49 +13,69 @@
     border-radius: 10px;
     align-items: center;
     justify-content: center;
+    flex-direction: row;
   }
 
+  &.checked,
+  &:hover.checked,
+  &:hover,
+  &.disabled,
+  &.disabled.checked,
   &.checked .indicator,
-  &:hover.checked .indicator,
-  &.disabled.checked .indicator {
+  &:hover.checked .indicator {
     width: 9px;
     height: 9px;
-    border: none;
     border-radius: 50px;
     align-items: flex-start;
-    justify-content: left;
+    justify-content: flex-start;
   }
 
-  &,
+  &.checked,
+  &.checked .indicator,
+  &:hover.checked,
+  &:hover.checked .indicator,
+  &:hover,
+  &.disabled,
+  &.disabled.checked,
+  &.disabled.checked .indicator {
+    padding: 0px 0px 0px 0px;
+    gap: 0px;
+    box-shadow: none;
+  }
+
   &.checked,
   &:hover.checked,
   &:hover {
     border: 1px solid rgba(229, 229, 229, 1);
   }
 
-  &.disabled,
-  &.disabled.checked {
+  &.checked,
+  &:hover.checked,
+  &:hover,
+  &.disabled {
     border: 1px solid rgba(240, 240, 240, 1);
   }
 
   &.checked .indicator,
   &:hover.checked .indicator {
+    border: none;
+  }
+
+  &.checked .indicator {
     background: rgba(0, 125, 50, 1);
     color: rgba(0, 125, 50, 1);
   }
 
-  &.disabled.checked .indicator {
+  indicator {
     background: rgba(128, 197, 162, 1);
     color: rgba(128, 197, 162, 1);
   }
 
-  &:hover.checked,
-  &:hover {
+  &:hover.checked {
     background: rgba(238, 238, 238, 1);
     color: rgba(238, 238, 238, 1);
   }
 
-  &,
   &.checked,
   &.disabled,
   &.disabled.checked {

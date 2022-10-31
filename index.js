@@ -15,9 +15,11 @@ import {
   collectTextTransform,
 } from './utils/collect.js';
 
-const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt';
-// const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8';
-const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
+// const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt'; // Testing
+const FIGMA_FILE = 'BgEHpami4zAtOXq6UJGoiE'; // My lib
+// const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8'; // IW
+const FIGMA_TOKEN = 'figd_WaKB3m_aRA1hUETzvit5GOn7ir9EfEssbH5NT-La'; // MyToken
+// const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
 
 const STATES = ['hover', 'disabled', 'readonly'];
 
@@ -152,9 +154,19 @@ const CONFIG = {
       },
     },
     Select: {
-      statesAsClass: ['placeholder'],
+      statesAsClass: ['disabled'],
     },
-    SelectItem: {},
+    Dropdown: {
+      children: {
+        list: {
+          ignore: true,
+        },
+        input: {
+          ignore: true,
+        }
+      },
+    },
+    DropdownItem: {},
   },
 }
 
@@ -186,50 +198,50 @@ const FONT_STYLES_MAP = {
 }
 
 const BASE_STYLES_MAP = {
-  // 'width': {
-  //   collector: (variant, parent) => collectWidth(variant, parent),
-  // },
-  // 'height': {
-  //   collector: (variant, parent) => collectHeight(variant, parent),
-  // },
-  // 'padding': {
-  //   collector: collectPadding,
-  // },
-  // 'border': {
-  //   collector: collectBorder,
-  // },
-  // 'border-radius': {
-  //   collector: collectBorderRadius,
-  // },
-  // 'background': {
-  //   collector: collectBackground,
-  // },
+  'width': {
+    collector: (variant, parent) => collectWidth(variant, parent),
+  },
+  'height': {
+    collector: (variant, parent) => collectHeight(variant, parent),
+  },
+  'padding': {
+    collector: collectPadding,
+  },
+  'border': {
+    collector: collectBorder,
+  },
+  'border-radius': {
+    collector: collectBorderRadius,
+  },
+  'background': {
+    collector: collectBackground,
+  },
   'align-items': {
     collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'vertical'),
   },
-  // 'justify-content': {
-  //   collector: (variant) => collectAlign(variant.primaryAxisAlignItems, 'horizontal'),
-  // },
-  // 'gap': {
-  //   collector: (variant) => `${variant.itemSpacing || 0}px`,
-  // },
-  // 'box-shadow': {
-  //   collector: collectShadow,
-  // },
-  // 'transition': {
-  //   collector: collectTransition,
-  // },
-  // 'color': {
-  //   collector: collectColor,
-  // },
-  // 'flex-direction': {
-  //   collector: (variant) => collectDirection(variant),
-  // },
+  'justify-content': {
+    collector: (variant) => collectAlign(variant.primaryAxisAlignItems, 'horizontal'),
+  },
+  'gap': {
+    collector: (variant) => `${variant.itemSpacing || 0}px`,
+  },
+  'box-shadow': {
+    collector: collectShadow,
+  },
+  'transition': {
+    collector: collectTransition,
+  },
+  'color': {
+    collector: collectColor,
+  },
+  'flex-direction': {
+    collector: (variant) => collectDirection(variant),
+  },
 }
 
 const STYLES = {
   ...BASE_STYLES_MAP,
-  // ...FONT_STYLES_MAP,
+  ...FONT_STYLES_MAP,
 }
 
 async function fetchFigma(path) {
@@ -258,6 +270,7 @@ async function getFiles(path) {
   // Collecting all data from firma file
   await fetchFigma(path)
     .then(data => {
+      console.log('STYLES:', data.styles);
       stylesPath = getStylesPath(data.styles);
       components = data.document;
     });
@@ -291,7 +304,7 @@ function collectChildren(variant, children, modifier, component) {
       if (child.name !== 'text' && child.visible !== false) {
         let childName = child.name.startsWith('$') ? child.name.split('-')[0].replace('$', 'iw-') : child.name;
         const isHtmlElement = HTML_ELEMENTS.includes(childName);
-        let prefix = !isHtmlElement ? ' .' : ' ';
+        let prefix = !isHtmlElement ? '.' : '';
 
         // If child is an icon
         if (child.type === 'VECTOR' || child.name.toUpperCase() === 'VECTOR') {
@@ -299,11 +312,11 @@ function collectChildren(variant, children, modifier, component) {
           childName = '';
         }
 
-        let childModifier = modifier.length ? `${modifier}${prefix}${childName}` : childName;
+        let childModifier = modifier.length ? `${modifier} ${prefix}${childName}` : `${prefix}${childName}`;
 
-        if (HTML_SUBELEMENTS.includes(childName)) {
-          childModifier = `${modifier}::placeholder`;
-        }
+        // if (HTML_SUBELEMENTS.includes(childName)) {
+        //   childModifier = `${modifier}::placeholder`;
+        // }
 
         collectProperties(child, children, childModifier, component, childName, variant);
 
@@ -353,6 +366,14 @@ function generateVariable(data, prop) {
   return { [variable]: data.values[prop] };
 }
 
+function createModifierProp(result, options) {
+  if (!result[options.modifier]) {
+    result[options.modifier] = {};
+  }
+
+  result[options.modifier][options.key] = options.value;
+}
+
 function parse(props) {
   let result = {};
 
@@ -365,99 +386,49 @@ function parse(props) {
         });
 
       let modifier = '';
-      let value = null;
-      let count = 0;
 
-      // console.log(sortedByProp);
+      sortedByProp.forEach((item, index) => {
+        //  Generating variable instead of mixin
+        if (item.variables && item.variables[key]) {
+          const variable = generateVariable(item, key);
 
-      if (sortedByProp.length === 1) {
-        console.log('L:L:');
-
-        modifier = sortedByProp[0].component ? `.${sortedByProp[0].component}` : modifier;
-
-        if (!result[modifier]) {
-          result[modifier] = {}
+          result = { ...result, ...variable };
         }
 
-        result[modifier][key] = sortedByProp[0].values[key];
-      } else {
-        for (let i = 0; i < sortedByProp.length; i++) {
-          const component = sortedByProp[i].component;
+        const currentValue = item.values[key];
+        const nextValue = sortedByProp[index + 1]?.values[key];
 
-          // Generating variable instead of mixin
-          if (sortedByProp[i].variables && sortedByProp[i].variables[key]) {
-            const variable = generateVariable(sortedByProp[i], key);
+        const root = item.element || item.component || '';
 
-            result = { ...result, ...variable };
-
-            continue;
-          }
-
-          // Setting first modifier
-          if (!modifier.length) {
-            modifier = component ? `.${component}` : sortedByProp[i].modifier;
-          }
-
-          // TODO add no value
-          if (sortedByProp[i + 1]?.values[key] === sortedByProp[i]?.values[key]) {
-            count += 1;
-
-            if (!value) {
-              value = sortedByProp[i].values[key];
-            }
-
-            // If exists next item with same value, we extends out modifier by new modifier
-            if (sortedByProp[i + 1]?.modifier) {
-              console.log('TTT', modifier);
-
-
-              if (!modifier.length) {
-                if (!result[modifier]) {
-                  result[modifier] = {};
-                }
-
-                result[modifier][key] = value;
-              }
-
-              const prevModifier = modifier.length ? `${modifier},` : modifier;
-              modifier = `${prevModifier}${sortedByProp[i + 1].modifier}`;
-            } else {
-              modifier = `&,${modifier}`;
-            }
-          } else {
-            const htmlElement = sortedByProp[i].element;
-            const componentSelector = component === 'placeholder' ? `::${component}` : `.${component}`;
-
-            // TODO this dont work properly
-            if (count === sortedByProp.length - 1) {
-              // CHECK THIS
-              if (component) {
-                modifier = componentSelector;
-              } else if (htmlElement) {
-                modifier = htmlElement;
-              } else {
-                modifier = '';
-              }
-            }
-
-            value = value || sortedByProp[i].values[key];
-
-            console.log(modifier, value, 'FINAL');
-
-            if (value) {
-              if (!result[modifier]) {
-                result[modifier] = {};
-              }
-
-              result[modifier][key] = value;
-            }
-
-            modifier = '';
-            count = 0;
-            value = null;
-          }
+        // Optimize
+        // Adding only not equal to default values
+        if (result[root] && result[root][key] === currentValue) {
+          return;
         }
-      }
+
+        const isRoot = !item.modifier.length && item.component === null;
+
+        // Root modifier
+        // Setting host properties
+        if (isRoot) {
+          modifier = '';
+          createModifierProp(result, { modifier, key, value: currentValue });
+
+          return;
+        }
+
+        if (!modifier.length) {
+          modifier = item.modifier;
+        } else {
+          modifier += `,${item.modifier}`;
+        }
+
+        if (currentValue !== nextValue) {
+          createModifierProp(result, { modifier, key, value: currentValue });
+
+          modifier = '';
+        }
+      });
     });
 
   return result;

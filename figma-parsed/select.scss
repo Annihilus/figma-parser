@@ -1,308 +1,357 @@
 // Select // -----------------------------
 
 @mixin select {
+  width: 100%;
+  height: 36px;
+  padding: 0px 8px 0px 8px;
+  border: 1px solid rgba(229, 229, 229, 1);
+  border-radius: 2px;
+  background: rgba(238, 238, 238, 1);
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  box-shadow: none;
+  color: rgba(238, 238, 238, 1);
+  flex-direction: row;
 
-
-  &.closeIcon.selected .Dropdown {
-    height: 109px;
-    padding: 8px 8px 8px 8px;
-    box-shadow: 0px 2px 10px  rgba(0, 0, 0, 0.11999999731779099);
-    flex-direction: column;
+  .element,
+  &.disabled .element,
+  &:hover .element,
+  &.filled .element,
+  &.filled.disabled .element,
+  &.filled:hover .element,
+  &.selected .element,
+  &:hover.selected .element,
+  &.filled:hover.selected .element,
+  &.error .element,
+  &:hover.error .element {
+    width: 100%;
+    border-radius: 0px 0px 0px 0px;
   }
 
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.closeIcon.selected .Select .iw-iconVector {
-    height: 13.3333740234375px;
-  }
-
-  &.closeIcon.selected {
-    height: 145px;
-  }
-
-  &.placeholder .iw-icon,
-  &.placeholder:disabled .iw-icon,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-icon,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-icon,
-  &.filled:disabled .iw-icon,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-icon,
-  &.placeholder:hover .iw-icon,
-  &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .platformUpChevron {
+  .iw-icon,
+  &.disabled .iw-icon,
+  &:hover .iw-icon,
+  &.filled .iw-icon,
+  &.filled.disabled .iw-icon,
+  &.filled:hover .iw-icon,
+  &.selected .iw-icon,
+  &:hover.selected .iw-icon,
+  &.filled:hover.selected .iw-icon,
+  &.error .iw-icon,
+  &:hover.error .iw-icon {
+    width: 16px;
     height: 16px;
-    background: transparent;
   }
 
-  &.placeholder,
-  &.placeholder:disabled,
-  &.filled.closeIcon,
-  &.closeIcon.error,
-  &.closeIcon:hover.error,
-  &.filled:disabled,
-  &.filled.closeIcon:hover,
-  &.placeholder:hover,
-  &.closeIcon.selected .Select {
-    height: 36px;
-    padding: 0px 8px 0px 8px;
-    align-items: center;
-    gap: 8px;
-    flex-direction: row;
+  .iw-icon ,
+  &.disabled .iw-icon ,
+  &:hover .iw-icon ,
+  &.filled .iw-icon ,
+  &.filled.disabled .iw-icon ,
+  &.filled:hover .iw-icon ,
+  &.selected .iw-icon ,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected .iw-icon ,
+  &.error .iw-icon ,
+  &:hover.error .iw-icon  {
+    width: auto;
+    background: none;
   }
 
-  &.placeholder .iw-iconVector,
-  &.placeholder:disabled .iw-iconVector,
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled:disabled .iw-iconVector,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.placeholder:hover .iw-iconVector,
-  &.closeIcon.selected .Select .platformUpChevronVector {
-    height: 6.6728515625px;
+  .element,
+  .iw-icon ,
+  &.disabled .element,
+  &.disabled .iw-icon ,
+  &:hover .element,
+  &:hover .iw-icon ,
+  &.filled .element,
+  &.filled .iw-icon ,
+  &.filled.disabled .element,
+  &.filled.disabled .iw-icon ,
+  &.filled:hover .element,
+  &.filled:hover .iw-icon ,
+  &.selected .element,
+  &.selected .iw-icon ,
+  &:hover.selected .element,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected .element,
+  &.filled:hover.selected .iw-icon ,
+  &.error .element,
+  &.error .iw-icon ,
+  &:hover.error .element,
+  &:hover.error .iw-icon  {
+    height: auto;
   }
 
-  &.placeholder .iw-icon,
-  &.placeholder .iw-iconVector,
-  &.placeholder:disabled .iw-icon,
-  &.placeholder:disabled .iw-iconVector,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled:disabled .iw-icon,
-  &.filled:disabled .iw-iconVector,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.placeholder:hover .iw-icon,
-  &.placeholder:hover .iw-iconVector,
-  &.closeIcon.selected,
-  &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .iw-iconVector,
-  &.closeIcon.selected .Select .platformUpChevron,
-  &.closeIcon.selected .Select .platformUpChevronVector {
+  .element,
+  .iw-icon,
+  .iw-icon ,
+  &.disabled .element,
+  &.disabled .iw-icon,
+  &.disabled .iw-icon ,
+  &:hover .element,
+  &:hover .iw-icon,
+  &:hover .iw-icon ,
+  &.filled .element,
+  &.filled .iw-icon,
+  &.filled .iw-icon ,
+  &.filled.disabled .element,
+  &.filled.disabled .iw-icon,
+  &.filled.disabled .iw-icon ,
+  &.filled:hover .element,
+  &.filled:hover .iw-icon,
+  &.filled:hover .iw-icon ,
+  &.selected .element,
+  &.selected .iw-icon,
+  &.selected .iw-icon ,
+  &:hover.selected .element,
+  &:hover.selected .iw-icon,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected .element,
+  &.filled:hover.selected .iw-icon,
+  &.filled:hover.selected .iw-icon ,
+  &.error .element,
+  &.error .iw-icon,
+  &.error .iw-icon ,
+  &:hover.error .element,
+  &:hover.error .iw-icon,
+  &:hover.error .iw-icon  {
     padding: 0px 0px 0px 0px;
-    border-radius: 0;
-  }
-
-  &.filled.closeIcon,
-  &.filled.closeIcon:hover,
-  &.placeholder:hover,
-  &.closeIcon.selected .Select {
-    border: 1px solid rgba(0, 140, 70, 1);
-  }
-
-  &.closeIcon.error,
-  &.closeIcon:hover.error {
-    border: 1px solid rgba(207, 69, 52, 1);
-  }
-
-  &.placeholder,
-  &.placeholder:disabled,
-  &.filled:disabled {
-    border: 1px solid rgba(229, 229, 229, 1);
-  }
-
-  &.placeholder .iw-icon,
-  &.placeholder .iw-iconVector,
-  &.placeholder:disabled .iw-icon,
-  &.placeholder:disabled .iw-iconVector,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled:disabled .iw-icon,
-  &.filled:disabled .iw-iconVector,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.placeholder:hover .iw-icon,
-  &.placeholder:hover .iw-iconVector,
-  &.closeIcon.selected,
-  &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .iw-iconVector,
-  &.closeIcon.selected .Select .platformUpChevron,
-  &.closeIcon.selected .Select .platformUpChevronVector,
-  &.closeIcon.selected .Dropdown {
-    border: none;
     align-items: flex-start;
     gap: 0px;
   }
 
-  &.placeholder,
-  &.placeholder:disabled,
-  &.filled.closeIcon,
-  &.closeIcon.error,
-  &.closeIcon:hover.error,
-  &.filled:disabled,
-  &.filled.closeIcon:hover,
-  &.placeholder:hover,
-  &.closeIcon.selected .Select,
-  &.closeIcon.selected .Dropdown {
-    border-radius: 2px;
+  &:hover,
+  &.filled,
+  &.filled:hover {
+    border: 1px solid rgba(0, 140, 70, 1);
   }
 
-  &.placeholder .iw-iconVector,
-  &.placeholder:disabled .iw-iconVector,
-  &.filled.closeIcon .iw-iconVector,
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled:disabled .iw-iconVector,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.placeholder:hover .iw-iconVector,
-  &.closeIcon.selected .Select .iw-iconVector,
-  &.closeIcon.selected .Select .platformUpChevronVector {
-    background: none;
+  &.error,
+  &:hover.error {
+    border: 1px solid rgba(207, 69, 52, 1);
   }
 
-  &.closeIcon.selected .Select {
+  .element,
+  .iw-icon,
+  .iw-icon ,
+  &.disabled .element,
+  &.disabled .iw-icon,
+  &.disabled .iw-icon ,
+  &:hover .element,
+  &:hover .iw-icon,
+  &:hover .iw-icon ,
+  &.filled .element,
+  &.filled .iw-icon,
+  &.filled .iw-icon ,
+  &.filled.disabled .element,
+  &.filled.disabled .iw-icon,
+  &.filled.disabled .iw-icon ,
+  &.filled:hover .element,
+  &.filled:hover .iw-icon,
+  &.filled:hover .iw-icon ,
+  &.selected,
+  &.selected .element,
+  &.selected .iw-icon,
+  &.selected .iw-icon ,
+  &:hover.selected,
+  &:hover.selected .element,
+  &:hover.selected .iw-icon,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected,
+  &.filled:hover.selected .element,
+  &.filled:hover.selected .iw-icon,
+  &.filled:hover.selected .iw-icon ,
+  &.error .element,
+  &.error .iw-icon,
+  &.error .iw-icon ,
+  &:hover.error .element,
+  &:hover.error .iw-icon,
+  &:hover.error .iw-icon  {
+    border: none;
+  }
+
+  .iw-icon,
+  .iw-icon ,
+  &.disabled .iw-icon,
+  &.disabled .iw-icon ,
+  &:hover .iw-icon,
+  &:hover .iw-icon ,
+  &.filled .iw-icon,
+  &.filled .iw-icon ,
+  &.filled.disabled .iw-icon,
+  &.filled.disabled .iw-icon ,
+  &.filled:hover .iw-icon,
+  &.filled:hover .iw-icon ,
+  &.selected .iw-icon,
+  &.selected .iw-icon ,
+  &:hover.selected .iw-icon,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected .iw-icon,
+  &.filled:hover.selected .iw-icon ,
+  &.error .iw-icon,
+  &.error .iw-icon ,
+  &:hover.error .iw-icon,
+  &:hover.error .iw-icon  {
+    border-radius: 0;
+  }
+
+  &.selected,
+  &:hover.selected,
+  &.filled:hover.selected {
     background: rgba(0, 140, 70, 1);
     color: rgba(0, 140, 70, 1);
   }
 
-  &.placeholder,
-  &.placeholder:disabled,
-  &.placeholder:hover {
-    background: rgba(238, 238, 238, 1);
-    color: rgba(238, 238, 238, 1);
-  }
-
-  &.filled.closeIcon,
-  &.closeIcon.error,
-  &.closeIcon:hover.error,
-  &.filled:disabled,
-  &.filled.closeIcon:hover,
-  &.closeIcon.selected,
-  &.closeIcon.selected .Dropdown {
+  &.filled,
+  &.filled.disabled,
+  &.filled:hover,
+  &.error,
+  &:hover.error {
     background: rgba(255, 255, 255, 1);
   }
 
-  .Dropdown {
-    justify-content: left;
+  .element,
+  .iw-icon,
+  &.disabled .element,
+  &.disabled .iw-icon,
+  &:hover .element,
+  &:hover .iw-icon,
+  &.filled .element,
+  &.filled .iw-icon,
+  &.filled.disabled .element,
+  &.filled.disabled .iw-icon,
+  &.filled:hover .element,
+  &.filled:hover .iw-icon,
+  &.selected .element,
+  &.selected .iw-icon,
+  &:hover.selected .element,
+  &:hover.selected .iw-icon,
+  &.filled:hover.selected .element,
+  &.filled:hover.selected .iw-icon,
+  &.error .element,
+  &.error .iw-icon,
+  &:hover.error .element,
+  &:hover.error .iw-icon {
+    background: transparent;
   }
 
-  &.placeholder,
-  &.placeholder .iw-icon,
-  &.placeholder .iw-iconVector,
-  &.placeholder:disabled,
-  &.placeholder:disabled .iw-icon,
-  &.placeholder:disabled .iw-iconVector,
-  &.filled.closeIcon,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled:disabled,
-  &.filled:disabled .iw-icon,
-  &.filled:disabled .iw-iconVector,
-  &.filled.closeIcon:hover,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.placeholder:hover,
-  &.placeholder:hover .iw-icon,
-  &.placeholder:hover .iw-iconVector,
-  &.closeIcon.selected,
-  &.closeIcon.selected .Select,
-  &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .iw-iconVector,
-  &.closeIcon.selected .Select .platformUpChevron,
-  &.closeIcon.selected .Select .platformUpChevronVector {
-    box-shadow: none;
+  .element,
+  .iw-icon,
+  .iw-icon ,
+  &.disabled .element,
+  &.disabled .iw-icon,
+  &.disabled .iw-icon ,
+  &:hover .element,
+  &:hover .iw-icon,
+  &:hover .iw-icon ,
+  &.filled,
+  &.filled .element,
+  &.filled .iw-icon,
+  &.filled .iw-icon ,
+  &.filled.disabled,
+  &.filled.disabled .element,
+  &.filled.disabled .iw-icon,
+  &.filled.disabled .iw-icon ,
+  &.filled:hover,
+  &.filled:hover .element,
+  &.filled:hover .iw-icon,
+  &.filled:hover .iw-icon ,
+  &.selected .element,
+  &.selected .iw-icon,
+  &.selected .iw-icon ,
+  &:hover.selected .element,
+  &:hover.selected .iw-icon,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected .element,
+  &.filled:hover.selected .iw-icon,
+  &.filled:hover.selected .iw-icon ,
+  &.error,
+  &.error .element,
+  &.error .iw-icon,
+  &.error .iw-icon ,
+  &:hover.error,
+  &:hover.error .element,
+  &:hover.error .iw-icon,
+  &:hover.error .iw-icon  {
+    justify-content: flex-start;
   }
 
-  &.filled.closeIcon,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.filled.closeIcon .iw-icon,
-  &.filled.closeIcon .iw-iconVector,
-  &.closeIcon.error,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon.error .iw-icon,
-  &.closeIcon.error .iw-iconVector,
-  &.closeIcon:hover.error,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.closeIcon:hover.error .iw-icon,
-  &.closeIcon:hover.error .iw-iconVector,
-  &.filled.closeIcon:hover,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector,
-  &.filled.closeIcon:hover .iw-icon,
-  &.filled.closeIcon:hover .iw-iconVector {
+  &.filled .iw-icon,
+  &.filled .iw-icon ,
+  &.filled:hover .iw-icon,
+  &.filled:hover .iw-icon ,
+  &.error .iw-icon,
+  &.error .iw-icon ,
+  &:hover.error .iw-icon,
+  &:hover.error .iw-icon  {
     color: rgba(0, 0, 0, 1);
   }
 
-  &.placeholder::placeholder,
-  &.placeholder .iw-icon,
-  &.placeholder .iw-iconVector,
-  &.filled:disabled,
-  &.placeholder:hover::placeholder,
-  &.placeholder:hover .iw-icon,
-  &.placeholder:hover .iw-iconVector {
+  .element .placeholder,
+  .iw-icon,
+  .iw-icon ,
+  &:hover .element .placeholder,
+  &:hover .iw-icon,
+  &:hover .iw-icon ,
+  &.filled.disabled .element {
     color: rgba(132, 132, 132, 1);
   }
 
-  &.placeholder:disabled::placeholder,
-  &.placeholder:disabled .iw-icon,
-  &.placeholder:disabled .iw-iconVector,
-  &.filled:disabled .iw-icon,
-  &.filled:disabled .iw-iconVector {
+  &.disabled .element .placeholder,
+  &.disabled .iw-icon,
+  &.disabled .iw-icon ,
+  &.filled.disabled .iw-icon,
+  &.filled.disabled .iw-icon  {
     color: rgba(204, 204, 204, 1);
   }
 
-  &.closeIcon.selected,
-  &.closeIcon.selected .Select .Content,
-  &.closeIcon.selected .Select .iw-icon,
-  &.closeIcon.selected .Select .iw-iconVector,
-  &.closeIcon.selected .Select .platformUpChevron,
-  &.closeIcon.selected .Select .platformUpChevronVector,
-  &.closeIcon.selected .Dropdown {
+  &.filled,
+  &.filled.disabled,
+  &.filled:hover,
+  &.selected .element,
+  &.selected .element .placeholder,
+  &.selected .iw-icon,
+  &.selected .iw-icon ,
+  &:hover.selected .element,
+  &:hover.selected .element .placeholder,
+  &:hover.selected .iw-icon,
+  &:hover.selected .iw-icon ,
+  &.filled:hover.selected .element,
+  &.filled:hover.selected .iw-icon,
+  &.filled:hover.selected .iw-icon ,
+  &.error,
+  &:hover.error {
     color: rgba(255, 255, 255, 1);
   }
 
-  .Content {
+  .element,
+  &.disabled .element,
+  &:hover .element,
+  &.filled .element,
+  &.filled:hover .element,
+  &.error .element,
+  &:hover.error .element {
+    color: rgba(51, 51, 51, 1);
+  }
+
+  .element,
+  .element .placeholder,
+  &.disabled .element,
+  &.disabled .element .placeholder,
+  &:hover .element,
+  &:hover .element .placeholder,
+  &.filled .element,
+  &.filled.disabled .element,
+  &.filled:hover .element,
+  &.selected .element,
+  &.selected .element .placeholder,
+  &:hover.selected .element,
+  &:hover.selected .element .placeholder,
+  &.filled:hover.selected .element,
+  &.error .element,
+  &:hover.error .element {
     font-family: Roboto;
     line-height: 22px;
     font-size: 16px;

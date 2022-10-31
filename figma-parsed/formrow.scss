@@ -3,124 +3,319 @@
 @mixin formRow {
 
 
-  &.hint.direction-horizontal .label,
-  &.direction-horizontal .label,
-  &.hint.error.direction-horizontal .label,
-  &.error.direction-horizontal .label {
-    width: 150px;
-    justify-content: right;
-  }
-
+  &.direction-horizontal,
+  &.error.direction-horizontal,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .element,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
+  &.hint.direction-vertical,
   &.hint.direction-vertical .label,
-  &.direction-vertical .label,
+  &.hint.direction-vertical .formElement,
+  &.hint.error.direction-vertical,
   &.hint.error.direction-vertical .label,
+  &.direction-vertical,
+  &.direction-vertical .label,
+  &.direction-vertical .formElement,
+  &.error.direction-vertical,
   &.error.direction-vertical .label {
-    width: 350px;
-    align-items: center;
+    width: 100%;
   }
 
-  .label {
+  &.direction-horizontal .label,
+  &.error.direction-horizontal .label,
+  &.hint.direction-horizontal .label {
+    width: 150px;
+    justify-content: flex-end;
+  }
+
+  &.direction-horizontal .formElement,
+  &.error.direction-horizontal .formElement {
+    width: 451px;
+    border-radius: 2px;
+  }
+
+  formElement {
+    width: 601px;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  &.hint.direction-vertical {
+    height: 122px;
+  }
+
+  &.hint.direction-horizontal .label {
     height: 36px;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    font-family: Roboto;
-    line-height: 36px;
-    font-size: 15px;
-    font-weight: 400;
+  }
+
+  HelperText {
+    height: 44px;
+    padding: 0px 8px 0px 8px;
+    background: rgba(245, 218, 214, 1);
+    gap: 10px;
+    line-height: 22px;
+    font-size: 16px;
   }
 
   &.hint.direction-horizontal,
-  &.direction-horizontal,
   &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .element .formElement {
+    height: 86px;
+  }
+
+  &.direction-horizontal,
+  &.direction-horizontal .label,
+  &.direction-horizontal .formElement,
   &.error.direction-horizontal,
-  &.hint.direction-vertical,
+  &.error.direction-horizontal .label,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal .element,
+  &.hint.direction-vertical .label,
+  &.hint.direction-vertical .formElement,
+  &.hint.error.direction-vertical .label,
   &.direction-vertical,
+  &.direction-vertical .label,
+  &.direction-vertical .formElement,
+  &.error.direction-vertical,
+  &.error.direction-vertical .label {
+    height: auto;
+  }
+
+  &.direction-horizontal,
+  &.direction-horizontal .formElement,
+  &.error.direction-horizontal,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .element,
+  &.hint.error.direction-horizontal .element .formElement,
+  &.hint.direction-vertical,
+  &.hint.direction-vertical .formElement,
   &.hint.error.direction-vertical,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical,
+  &.direction-vertical .formElement,
   &.error.direction-vertical {
     padding: 0px 0px 0px 0px;
+  }
+
+  &.direction-horizontal .label,
+  &.error.direction-horizontal .label,
+  &.hint.direction-horizontal .label,
+  &.hint.error.direction-horizontal .label,
+  &.hint.direction-vertical .label,
+  &.hint.error.direction-vertical .label,
+  &.direction-vertical .label {
+    padding: 0px 8px 0px 0px;
+    gap: 3px;
+    line-height: 36px;
+    font-size: 15px;
+  }
+
+  &.direction-horizontal,
+  &.direction-horizontal .label,
+  &.direction-horizontal .formElement,
+  &.error.direction-horizontal,
+  &.error.direction-horizontal .label,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .label,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element,
+  &.hint.error.direction-horizontal .element .formElement,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
+  &.hint.direction-vertical,
+  &.hint.direction-vertical .label,
+  &.hint.direction-vertical .formElement,
+  &.hint.error.direction-vertical,
+  &.hint.error.direction-vertical .label,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical,
+  &.direction-vertical .label,
+  &.direction-vertical .formElement,
+  &.error.direction-vertical,
+  &.error.direction-vertical .label {
+    border: none;
+    box-shadow: none;
+  }
+
+  &.direction-horizontal,
+  &.direction-horizontal .label,
+  &.error.direction-horizontal,
+  &.error.direction-horizontal .label,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .label,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element,
+  &.hint.error.direction-horizontal .element .formElement,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
+  &.hint.direction-vertical,
+  &.hint.direction-vertical .label,
+  &.hint.direction-vertical .formElement,
+  &.hint.error.direction-vertical,
+  &.hint.error.direction-vertical .label,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical,
+  &.direction-vertical .label,
+  &.direction-vertical .formElement,
+  &.error.direction-vertical {
+    border-radius: 0;
+  }
+
+  &.direction-horizontal,
+  &.error.direction-horizontal,
+  &.hint.direction-horizontal,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .element .formElement,
+  &.hint.direction-vertical,
+  &.hint.error.direction-vertical,
+  &.direction-vertical {
     background: rgba(255, 255, 255, 1);
-    gap: 0px;
     color: rgba(255, 255, 255, 1);
   }
 
-  &.hint.direction-horizontal .label,
   &.direction-horizontal .label,
-  &.hint.error.direction-horizontal .label,
+  &.direction-horizontal .formElement,
   &.error.direction-horizontal .label,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal .label,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element,
   &.hint.direction-vertical .label,
-  &.direction-vertical .label,
+  &.hint.direction-vertical .formElement,
   &.hint.error.direction-vertical .label,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical .label,
+  &.direction-vertical .formElement,
   &.error.direction-vertical .label {
-    padding: 0px 8px 0px 0px;
     background: transparent;
-    gap: 3px;
   }
 
-  &.hint.direction-horizontal,
-  &.hint.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element .formElement,
+  &.hint.direction-vertical .label,
+  &.hint.error.direction-vertical .label,
+  &.direction-vertical .label {
+    align-items: center;
+  }
+
   &.direction-horizontal,
   &.direction-horizontal .label,
-  &.hint.error.direction-horizontal,
-  &.hint.error.direction-horizontal .label,
+  &.direction-horizontal .formElement,
   &.error.direction-horizontal,
   &.error.direction-horizontal .label,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .label,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
   &.hint.direction-vertical,
-  &.direction-vertical,
+  &.hint.direction-vertical .formElement,
   &.hint.error.direction-vertical,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical,
+  &.direction-vertical .formElement,
   &.error.direction-vertical {
     align-items: flex-start;
   }
 
-  &.hint.direction-horizontal,
   &.direction-horizontal,
-  &.hint.error.direction-horizontal,
+  &.direction-horizontal .formElement,
   &.error.direction-horizontal,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .element,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
   &.hint.direction-vertical,
   &.hint.direction-vertical .label,
-  &.direction-vertical,
-  &.direction-vertical .label,
+  &.hint.direction-vertical .formElement,
   &.hint.error.direction-vertical,
   &.hint.error.direction-vertical .label,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical,
+  &.direction-vertical .label,
+  &.direction-vertical .formElement,
   &.error.direction-vertical,
   &.error.direction-vertical .label {
-    justify-content: left;
+    justify-content: flex-start;
   }
 
-  &.hint.error.direction-horizontal .label,
+  &.direction-horizontal,
+  &.direction-horizontal .formElement,
+  &.error.direction-horizontal,
+  &.error.direction-horizontal .formElement,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .formElement,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .element,
+  &.hint.direction-vertical,
+  &.hint.direction-vertical .formElement,
+  &.hint.error.direction-vertical,
+  &.hint.error.direction-vertical .formElement,
+  &.direction-vertical,
+  &.direction-vertical .formElement,
+  &.error.direction-vertical {
+    gap: 0px;
+  }
+
   &.error.direction-horizontal .label,
-  &.hint.error.direction-vertical .label,
-  &.error.direction-vertical .label {
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
+  &.hint.error.direction-vertical .label {
     color: rgba(207, 69, 52, 1);
   }
 
-  &.hint.direction-horizontal .label,
   &.direction-horizontal .label,
-  &.hint.direction-vertical .label,
-  &.direction-vertical .label {
+  &.hint.direction-horizontal .label,
+  &.hint.direction-vertical .label {
     color: rgba(51, 51, 51, 1);
   }
 
+  &.hint.error.direction-horizontal .element .formElement,
   &.hint.direction-vertical,
-  &.direction-vertical,
   &.hint.error.direction-vertical,
-  &.error.direction-vertical {
+  &.direction-vertical {
     flex-direction: column;
   }
 
-  &.hint.direction-horizontal,
-  &.hint.direction-horizontal .label,
   &.direction-horizontal,
   &.direction-horizontal .label,
-  &.hint.error.direction-horizontal,
-  &.hint.error.direction-horizontal .label,
   &.error.direction-horizontal,
   &.error.direction-horizontal .label,
+  &.hint.direction-horizontal,
+  &.hint.direction-horizontal .label,
+  &.hint.error.direction-horizontal,
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
   &.hint.direction-vertical .label,
-  &.direction-vertical .label,
   &.hint.error.direction-vertical .label,
-  &.error.direction-vertical .label {
+  &.direction-vertical .label {
     flex-direction: row;
+  }
+
+  &.direction-horizontal .label,
+  &.error.direction-horizontal .label,
+  &.hint.direction-horizontal .label,
+  &.hint.error.direction-horizontal .label,
+  &.hint.error.direction-horizontal .element .formElement .HelperText,
+  &.hint.direction-vertical .label,
+  &.hint.error.direction-vertical .label,
+  &.direction-vertical .label {
+    font-family: Roboto;
+    font-weight: 400;
   }
 
 }

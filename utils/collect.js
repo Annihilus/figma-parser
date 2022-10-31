@@ -23,12 +23,11 @@ const DIRECTION = {
 }
 
 export function collectWidth(variant, parent) {
-  const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
-
   if (variant.layoutAlign === 'STRETCH') {
     return '100%';
   }
 
+  const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
   let axis = '';
 
   if (source.layoutMode === 'VERTICAL') {
@@ -47,9 +46,9 @@ export function collectWidth(variant, parent) {
 export function collectHeight(variant, parent) {
   const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
 
-  if (variant.layoutAlign === 'STRETCH') {
-    return '100%';
-  }
+  // if (variant.layoutAlign === 'STRETCH') {
+  //   return '100%';
+  // }
 
   let axis = '';
 
