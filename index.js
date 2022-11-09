@@ -1,25 +1,21 @@
 import fetch from 'node-fetch';
 import * as fs from 'fs';
 import {
-  collectAlign,
-  collectBackground,
-  collectBorder,
-  collectBorderRadius,
   collectColor,
-  collectPadding,
-  collectShadow,
-  collectTransition,
-  collectDirection,
-  collectWidth,
-  collectHeight,
-  collectTextTransform,
 } from './utils/collect.js';
+import {
+  FONT_STYLES_MAP,
+  BASE_STYLES_MAP,
+  STYLES,
+} from './utils/maps.js';
+import { figmaStyles } from './utils/styles.js';
+import { colorToRgba } from './utils/color.js';
 
 // const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt'; // Testing
-const FIGMA_FILE = 'BgEHpami4zAtOXq6UJGoiE'; // My lib
-// const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8'; // IW
-const FIGMA_TOKEN = 'figd_WaKB3m_aRA1hUETzvit5GOn7ir9EfEssbH5NT-La'; // MyToken
-// const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ';
+// const FIGMA_FILE = 'BgEHpami4zAtOXq6UJGoiE'; // My lib
+const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8'; // IW
+// const FIGMA_TOKEN = 'figd_WaKB3m_aRA1hUETzvit5GOn7ir9EfEssbH5NT-La'; // MyToken
+const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ'; // IW TOKEN
 
 const STATES = ['hover', 'disabled', 'readonly'];
 
@@ -28,220 +24,171 @@ const HTML_SUBELEMENTS = ['placeholder'];
 
 const CONFIG = {
   components: {
-    Notifications: {
-    },
-    Button: {
-      children: {
-        spinner: {
-          include: ['width', 'height', 'color', 'padding'],
-          variables: {
-            color: ['type'],
-          },
-        },
-        icon: {
-          include: ['width', 'height', 'color'],
-        }
-      }
-    },
-    ButtonToggle: {
-      children: {
-        ignore: true,
-      }
-    },
-    Label: {
-      children: {
-        required: {
-          exclude: ['width', 'height', 'padding', 'background'],
-        },
-      },
-    },
-    Radiobutton: {
-      statesAsClass: ['disabled'],
-      children: {
-        icon: {
-          include: ['width', 'height', 'color'],
-        }
-      }
-    },
-    RadiobuttonGroup: {
-      exclude: ['width', 'height'],
-      children: {
-        Radiobutton: {
-          ignore: true,
-        },
-        RadiobuttonLabel: {
-          ignore: true,
-        }
-      }
-    },
-    RadiobuttonLabel: {
-      exclude: ['width', 'height'],
-      children: {
-        ignore: true,
-      }
-    },
-    Input: {
-      children: {
-        placeholder: {
-          include: ['color'],
-        },
-        platformEye: {
-          include: ['width', 'height', 'color'],
-        },
-        platformCross: {
-          include: ['width', 'height', 'color'],
-        },
-        platformKey: {
-          include: ['width', 'height', 'color'],
-        },
-      },
-    },
-    Checkbox: {
-      statesAsClass: ['disabled', 'readonly'],
-      children: {
-        icon: {
-          include: ['color'],
-        },
-        element: {
-          include: ['color'],
-        }
-      }
-    },
-    CheckboxLabel: {
-      exclude: ['width', 'height'],
-      children: {
-        ignore: true,
-      }
-    },
-    CheckboxGroup: {
-      exclude: ['width', 'height'],
-      children: {
-        ignore: true,
-      },
-    },
-    HintedElement: {
-      exclude: ['width', 'height'],
-      children: {
-        ignore: true,
-      }
-    },
-    HelperText: {
-      exclude: ['width', 'height'],
-    },
-    Popover: {},
-    FormBlock: {
-      exclude: ['width', 'height'],
-      children: {
-        title: {
-          exclude: ['width'],
-        },
-        content: {
-          exclude: ['width', 'height'],
-        },
-        row: {
-          ignore: true,
-        }
-      },
-    },
-    FormRow: {
-      children: {
-        HintedElement: {
-          ignore: true,
-        },
-        Input: {
-          ignore: true,
-        },
-      },
-    },
+    // Notifications: {},
+    // NotificationsSet: {},
+    // Button: {
+    //   children: {
+    //     spinner: {
+    //       include: ['width', 'height', 'color', 'padding'],
+    //       variables: {
+    //         color: ['type'],
+    //       },
+    //     },
+    //     icon: {
+    //       include: ['width', 'height', 'color'],
+    //     }
+    //   }
+    // },
+    // ButtonToggle: {
+    //   children: {
+    //     ignore: true,
+    //   }
+    // },
+    // Label: {
+    //   children: {
+    //     required: {
+    //       exclude: ['width', 'height', 'padding', 'background'],
+    //     },
+    //   },
+    // },
+    // Radiobutton: {
+    //   statesAsClass: ['disabled'],
+    //   children: {
+    //     icon: {
+    //       include: ['width', 'height', 'color'],
+    //     }
+    //   }
+    // },
+    // RadiobuttonGroup: {
+    //   exclude: ['width', 'height'],
+    //   children: {
+    //     Radiobutton: {
+    //       ignore: true,
+    //     },
+    //     RadiobuttonLabel: {
+    //       ignore: true,
+    //     }
+    //   }
+    // },
+    // RadiobuttonLabel: {
+    //   exclude: ['width', 'height'],
+    //   children: {
+    //     ignore: true,
+    //   }
+    // },
+    // Input: {
+    //   children: {
+    //     placeholder: {
+    //       include: ['color'],
+    //     },
+    //     platformEye: {
+    //       include: ['width', 'height', 'color'],
+    //     },
+    //     platformCross: {
+    //       include: ['width', 'height', 'color'],
+    //     },
+    //     platformKey: {
+    //       include: ['width', 'height', 'color'],
+    //     },
+    //   },
+    // },
+    // Checkbox: {
+    //   statesAsClass: ['disabled', 'readonly'],
+    //   children: {
+    //     icon: {
+    //       include: ['color'],
+    //     },
+    //     element: {
+    //       include: ['color'],
+    //     }
+    //   }
+    // },
+    // CheckboxLabel: {
+    //   exclude: ['width', 'height'],
+    //   children: {
+    //     ignore: true,
+    //   }
+    // },
+    // CheckboxGroup: {
+    //   exclude: ['width', 'height'],
+    //   children: {
+    //     ignore: true,
+    //   },
+    // },
+    // HintedElement: {
+    //   exclude: ['width', 'height'],
+    //   children: {
+    //     ignore: true,
+    //   }
+    // },
+    // HelperText: {
+    //   exclude: ['width', 'height'],
+    // },
+    // Popover: {},
+    // FormBlock: {
+    //   exclude: ['width', 'height'],
+    //   children: {
+    //     title: {
+    //       exclude: ['width'],
+    //     },
+    //     content: {
+    //       exclude: ['width', 'height'],
+    //     },
+    //     row: {
+    //       ignore: true,
+    //     }
+    //   },
+    // },
+    // FormRow: {
+    //   children: {
+    //     HintedElement: {
+    //       ignore: true,
+    //     },
+    //     Input: {
+    //       ignore: true,
+    //     },
+    //   },
+    // },
     Select: {
       statesAsClass: ['disabled'],
+      children: {
+        MultiselectItem: {
+          ignore: true,
+        }
+      }
     },
-    Dropdown: {
+    SelectDropdown: {
       children: {
         list: {
-          ignore: true,
+          children: {
+            ignore: true,
+          },
         },
         input: {
           ignore: true,
         }
       },
     },
-    DropdownItem: {},
+    SelectItem: {},
+    // MultiselectItem: {},
+    // Modal: {
+    //   variables: {
+    //     gap: [''],
+    //   },
+    //   children: {
+    //     ignore: true,
+    //   },
+    // },
+    // ModalHeader: {},
+    // ModalFooter: {
+    //   children: {
+    //     ignore: true,
+    //   }
+    // },
+    // Toggle: {
+    //   statesAsClass: ['disabled'],
+    // },
   },
-}
-
-const FONT_STYLES_MAP = {
-  'font-family': {
-    collector: (variant) => variant.style.fontFamily,
-  },
-  'line-height': {
-    units: 'px',
-    collector: (variant) => variant.style.lineHeightPx,
-  },
-  'letter-spacing': {
-    units: 'px',
-    collector: (variant) => variant.style.letterSpacing,
-  },
-  'font-size': {
-    units: 'px',
-    collector: (variant) => variant.style.fontSize,
-  },
-  'font-weight': {
-    collector: (variant) => variant.style.fontWeight,
-  },
-  'text-transform': {
-    collector: (variant) => collectTextTransform(variant),
-  },
-  'color': {
-    collector: collectColor,
-  }
-}
-
-const BASE_STYLES_MAP = {
-  'width': {
-    collector: (variant, parent) => collectWidth(variant, parent),
-  },
-  'height': {
-    collector: (variant, parent) => collectHeight(variant, parent),
-  },
-  'padding': {
-    collector: collectPadding,
-  },
-  'border': {
-    collector: collectBorder,
-  },
-  'border-radius': {
-    collector: collectBorderRadius,
-  },
-  'background': {
-    collector: collectBackground,
-  },
-  'align-items': {
-    collector: (variant) => collectAlign(variant.counterAxisAlignItems, 'vertical'),
-  },
-  'justify-content': {
-    collector: (variant) => collectAlign(variant.primaryAxisAlignItems, 'horizontal'),
-  },
-  'gap': {
-    collector: (variant) => `${variant.itemSpacing || 0}px`,
-  },
-  'box-shadow': {
-    collector: collectShadow,
-  },
-  'transition': {
-    collector: collectTransition,
-  },
-  'color': {
-    collector: collectColor,
-  },
-  'flex-direction': {
-    collector: (variant) => collectDirection(variant),
-  },
-}
-
-const STYLES = {
-  ...BASE_STYLES_MAP,
-  ...FONT_STYLES_MAP,
 }
 
 async function fetchFigma(path) {
@@ -260,19 +207,24 @@ async function fetchFigma(path) {
 function getStylesPath(styles) {
   const ids = Object.keys(styles).join(',');
 
-  return `https://api.figma.com/v1/files/NkNip5QXSmDjYr3zjWyDYd/nodes?ids=${ids}`;
+  return `https://api.figma.com/v1/files/${FIGMA_FILE}/nodes?ids=${ids}`;
 }
 
 async function getFiles(path) {
-  let stylesPath;
+  let stylesPath = [];
   let components;
 
   // Collecting all data from firma file
   await fetchFigma(path)
     .then(data => {
-      console.log('STYLES:', data.styles);
-      stylesPath = getStylesPath(data.styles);
+      stylesPath.push(getStylesPath(data.styles));
       components = data.document;
+    });
+
+  await fetchFigma(stylesPath)
+    .then(data => {
+      figmaStyles.styles = data;
+      createCssFile('styles', generateStylesFile(figmaStyles.styles));
     });
 
   // Parsing components
@@ -281,6 +233,39 @@ async function getFiles(path) {
     .forEach(component => {
       createCssFile(component.name, parseComponent(component));
     });
+}
+
+function generateStylesFile(data) {
+  let string = '';
+
+  Object.values(data)
+    .sort(function(a, b) {
+      return (a.variables.length > b.variables.length) ? 1 : ((b.variables.length > a.variables.length) ? -1 : 0)
+    })
+    .forEach(params => {
+      if (params.variables.length === 1) {
+        const value = params.variables[0];
+        string += `${value.name}: ${value.value};\n`;
+      } else if (params.variables.length > 1) {
+        let props = '';
+        const postfix = !string.length ? '\n' : '';
+
+        if (string.length) {
+          string += '\n';
+        }
+
+        params.variables.forEach((item, index) => {
+          const postfix = params.variables.length - 1 === index ? '' : '\n';
+          props += `  ${item.prop}: ${item.value};${postfix}`
+        });
+
+        string += `@mixin ${params.name} {
+${props}
+}\n${postfix}`
+      }
+    });
+
+  return string;
 }
 
 function collectComponents(data, componentSets = []) {
@@ -342,12 +327,14 @@ function parseComponent(component) {
     }
   });
 
-  const mixin = createMixin(parse(propsMap), component.name);
+  // console.log(propsMap);
+
+  const mixin = createMixin(parse(propsMap, component.name), component.name);
 
   return mixin;
 }
 
-function generateVariable(data, prop) {
+function generateVariable(data, prop, component) {
   const modifierParts = data.modifier.split('.');
   let variable = '';
 
@@ -363,6 +350,12 @@ function generateVariable(data, prop) {
     variable += `__${data.component}`;
   }
 
+  if (!variable) {
+    variable = `$${component.toLowerCase()}`;
+  }
+
+  variable += `_${prop}`;
+
   return { [variable]: data.values[prop] };
 }
 
@@ -374,7 +367,7 @@ function createModifierProp(result, options) {
   result[options.modifier][options.key] = options.value;
 }
 
-function parse(props) {
+function parse(props, component) {
   let result = {};
 
   Object.keys(STYLES)
@@ -387,10 +380,12 @@ function parse(props) {
 
       let modifier = '';
 
+      let count = 0;
+
       sortedByProp.forEach((item, index) => {
         //  Generating variable instead of mixin
         if (item.variables && item.variables[key]) {
-          const variable = generateVariable(item, key);
+          const variable = generateVariable(item, key, component);
 
           result = { ...result, ...variable };
         }
@@ -424,9 +419,17 @@ function parse(props) {
         }
 
         if (currentValue !== nextValue) {
+          // If property a same in all variants set value to default modifier
+          // if (count === sortedByProp.length - 1) {
+          //   modifier = '';
+          // }
+
           createModifierProp(result, { modifier, key, value: currentValue });
 
           modifier = '';
+          count = 0;
+        } else {
+          count += 1;
         }
       });
     });
@@ -435,7 +438,10 @@ function parse(props) {
 }
 
 function createCssFile(component, content) {
-  fs.writeFile(`./figma-parsed/${component.toLowerCase()}.scss`, content, function (err) {
+  const importStyles = '@import "./styles.scss";\n\n';
+  const result = component === 'styles' ? content : importStyles + content;
+
+  fs.writeFile(`./figma-parsed/${component.toLowerCase()}.scss`, result, function (err) {
     if (err) throw err;
     console.log(`${component} scss mixin file is created successfully.`);
   });
@@ -484,7 +490,8 @@ function collectBlockProperties(config, variant, parent) {
     .forEach((css) => {
       const data = BASE_STYLES_MAP[css];
       const iconInside = variant.children?.find(item => item.type === 'VECTOR' || item.name.toUpperCase() === 'VECTOR');
-      let figmaValue = data.collector(variant, parent);
+
+      let figmaValue = data.collector(variant, parent, variant.styles);
 
       if (variant.type === 'VECTOR' && css === 'background') {
         figmaValue = 'none';
@@ -507,15 +514,16 @@ function collectBlockProperties(config, variant, parent) {
 function collectFontProperties(variant) {
   const values = {};
 
-  Object.entries(FONT_STYLES_MAP).forEach(([css, data]) => {
-    const figmaValue = data.collector(variant);
+  Object.entries(FONT_STYLES_MAP)
+    .forEach(([css, data]) => {
+      const figmaValue = data.collector(variant);
 
-    if (figmaValue) {
-      const units = data.units ? data.units : '';
+      if (figmaValue) {
+        const units = data.units ? data.units : '';
 
-      values[css] = `${figmaValue}${units}`;
-    }
-  });
+        values[css] = `${figmaValue}${units}`;
+      }
+    });
 
   return values;
 }
@@ -540,10 +548,28 @@ function collectProperties(variant, propsMap, modifier, component, child = null,
 
     // Add font properties if have text inside
     if (textChild) {
-      variantData.values = { ...variantData.values, ...collectFontProperties(textChild)};
+      if (textChild.styles?.text) {
+        const styleId = textChild.styles?.text;
+        const variableName = styleId ? figmaStyles.getStylesById(styleId).name : null;
+
+        if (variableName !== null) {
+          variantData.values['mixin'] = figmaStyles.getStylesById(styleId).name;
+        }
+      } else {
+        variantData.values = { ...variantData.values, ...collectFontProperties(textChild)};
+      }
+      // Getting text color
+      variantData.values.color = BASE_STYLES_MAP.color.collector(textChild);
     }
   } else {
-    variantData.values = collectFontProperties(variant);
+    const styleId = variant.styles.text;
+    const textStyles = styleId ? figmaStyles.getStylesById(styleId) : null;
+
+    if (textStyles !== null) {
+      variantData.values['mixin'] = figmaStyles.getStylesById(styleId).name;
+    } else {
+      variantData.values = collectFontProperties(variant);
+    }
   }
 
   const exists = propsMap.find(item => item.modifier === modifier);
@@ -555,6 +581,10 @@ function collectProperties(variant, propsMap, modifier, component, child = null,
 
 // Getting all
 getFiles(`https://api.figma.com/v1/files/${FIGMA_FILE}`);
+
+function createFontMixin() {
+
+}
 
 function createMixin(data, component) {
   let result = '';
@@ -575,7 +605,14 @@ function createMixin(data, component) {
     propData.forEach(([prop, value], index) => {
       const postfix = propData.length !== index + 1 ? '\n' : '';
       const spaces = key === '' ? '  ' : '    ';
-      const result = `${spaces}${prop}: ${value};${postfix}`;
+      let result = '';
+
+      if (prop === 'mixin') {
+        result = `${spaces}@include ${value};${postfix}`;
+      } else {
+        result = `${spaces}${prop}: ${value};${postfix}`;
+      }
+
 
       if (key === '') {
         baseStyles += result;
@@ -605,8 +642,8 @@ ${props}
     }
   });
 
-  return `// ${component} // -----------------------------
-${variables}
+  return `${variables}
+// ${component} // -----------------------------
 @mixin ${lowerCaseFirstLetter(component)} {
 ${baseStyles}
 ${result}

@@ -1,7 +1,6 @@
 import { colorToRgba } from './color.js';
 
 function convertToDegree(matrix) {
-    console.log(matrix);
   const values = [...matrix[0], ...matrix[1]];
   const a = values[0];
   const b = values[1];

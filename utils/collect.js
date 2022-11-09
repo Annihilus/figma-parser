@@ -1,4 +1,5 @@
 import { colorToRgba } from './color.js';
+import { figmaStyles } from './styles.js';
 
 const TEXT_TRANSFORM = {
   UPPER: 'uppercase',
@@ -23,10 +24,6 @@ const DIRECTION = {
 }
 
 export function collectWidth(variant, parent) {
-  if (variant.layoutAlign === 'STRETCH') {
-    return '100%';
-  }
-
   const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
   let axis = '';
 
@@ -34,6 +31,10 @@ export function collectWidth(variant, parent) {
     axis = source.counterAxisSizingMode || variant.counterAxisSizingMode;
   } else {
     axis = source.primaryAxisSizingMode || variant.primaryAxisSizingMode;
+  }
+
+  if (source.layoutAlign === 'STRETCH') {
+    return '100%';
   }
 
   if (axis === 'FIXED') {
@@ -45,10 +46,6 @@ export function collectWidth(variant, parent) {
 
 export function collectHeight(variant, parent) {
   const source = variant.layoutAlign === 'INHERIT' ? parent ? parent : variant : variant;
-
-  // if (variant.layoutAlign === 'STRETCH') {
-  //   return '100%';
-  // }
 
   let axis = '';
 
@@ -65,15 +62,38 @@ export function collectHeight(variant, parent) {
   return 'auto';
 }
 
-export function collectBorder(variant) {
+export function collectBorderColor(variant) {
   if (!variant.strokes.length) {
     return 'none';
   }
 
-  const color = colorToRgba(variant.strokes[0].color);
-  const type = variant.strokes[0].type.toLowerCase();
+  let color = colorToRgba(variant.strokes[0].color);
 
-  return `${variant.strokeWeight}px ${type} ${color}`;
+  if (variant.styles?.strokes) {
+    color = figmaStyles.getStylesById(variant.styles.strokes).variables[0].name;
+  }
+
+  return color;
+}
+
+export function collectBorderStyle(variant) {
+  if (!variant.strokes.length) {
+    return 'transparent';
+  }
+
+  return variant.strokes[0].type.toLowerCase();
+}
+
+export function collectBorderWidth(variant) {
+  if (!variant.strokes.length) {
+    return '0';
+  }
+
+  if (variant.individualStrokeWeights) {
+    return Object.values(variant.individualStrokeWeights).join('px ');
+  }
+
+  return `${variant.strokeWeight || 0}px`;
 }
 
 export function collectBorderRadius(variant) {
@@ -87,6 +107,12 @@ export function collectBorderRadius(variant) {
 }
 
 export function collectBackground(variant) {
+  if (variant.styles?.fills) {
+    const variable = figmaStyles.getStylesById(variant.styles.fills).variables[0].name;
+
+    return variable;
+  }
+
   if (variant.fills && variant.fills.length) {
     const bg = variant.fills[0];
 
@@ -99,6 +125,12 @@ export function collectBackground(variant) {
 }
 
 export function collectColor(variant) {
+  if (variant.styles?.fill) {
+    const variable = figmaStyles.getStylesById(variant.styles.fill).variables[0].name;
+
+    return variable || null;
+  }
+
   if (variant.fills && variant.fills.length) {
     const color = variant.fills[0].color;
 
