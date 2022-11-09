@@ -1,2 +1,4 @@
 /node_modules
 /figma-parsed
+/test
+/figma-to-scss.config.json

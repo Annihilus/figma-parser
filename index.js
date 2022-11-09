@@ -1,202 +1,30 @@
-import fetch from 'node-fetch';
-import * as fs from 'fs';
-import {
-  collectColor,
-} from './utils/collect.js';
+import fetch from "node-fetch";
+import * as fs from "fs";
+import glob from "glob";
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import {
   FONT_STYLES_MAP,
   BASE_STYLES_MAP,
   STYLES,
-} from './utils/maps.js';
-import { figmaStyles } from './utils/styles.js';
-import { colorToRgba } from './utils/color.js';
+} from "./utils/maps.js";
+import { figmaStyles } from "./utils/styles.js";
 
-// const FIGMA_FILE = 'o2EFM7hYM1rHlK4N7Kftdt'; // Testing
-// const FIGMA_FILE = 'BgEHpami4zAtOXq6UJGoiE'; // My lib
-const FIGMA_FILE = 'HKGl7xfTcxukryFvKIUJJ8'; // IW
-// const FIGMA_TOKEN = 'figd_WaKB3m_aRA1hUETzvit5GOn7ir9EfEssbH5NT-La'; // MyToken
-const FIGMA_TOKEN = 'figd_ARCGHU5g0FIXtqOTjClda2IqkHmFoWzoCBAAf3GQ'; // IW TOKEN
+const STATES = ["hover", "disabled", "readonly"];
+const HTML_ELEMENTS = ["input"];
+const HTML_SUBELEMENTS = ["placeholder"];
 
-const STATES = ['hover', 'disabled', 'readonly'];
-
-const HTML_ELEMENTS = ['input'];
-const HTML_SUBELEMENTS = ['placeholder'];
-
-const CONFIG = {
-  components: {
-    // Notifications: {},
-    // NotificationsSet: {},
-    // Button: {
-    //   children: {
-    //     spinner: {
-    //       include: ['width', 'height', 'color', 'padding'],
-    //       variables: {
-    //         color: ['type'],
-    //       },
-    //     },
-    //     icon: {
-    //       include: ['width', 'height', 'color'],
-    //     }
-    //   }
-    // },
-    // ButtonToggle: {
-    //   children: {
-    //     ignore: true,
-    //   }
-    // },
-    // Label: {
-    //   children: {
-    //     required: {
-    //       exclude: ['width', 'height', 'padding', 'background'],
-    //     },
-    //   },
-    // },
-    // Radiobutton: {
-    //   statesAsClass: ['disabled'],
-    //   children: {
-    //     icon: {
-    //       include: ['width', 'height', 'color'],
-    //     }
-    //   }
-    // },
-    // RadiobuttonGroup: {
-    //   exclude: ['width', 'height'],
-    //   children: {
-    //     Radiobutton: {
-    //       ignore: true,
-    //     },
-    //     RadiobuttonLabel: {
-    //       ignore: true,
-    //     }
-    //   }
-    // },
-    // RadiobuttonLabel: {
-    //   exclude: ['width', 'height'],
-    //   children: {
-    //     ignore: true,
-    //   }
-    // },
-    // Input: {
-    //   children: {
-    //     placeholder: {
-    //       include: ['color'],
-    //     },
-    //     platformEye: {
-    //       include: ['width', 'height', 'color'],
-    //     },
-    //     platformCross: {
-    //       include: ['width', 'height', 'color'],
-    //     },
-    //     platformKey: {
-    //       include: ['width', 'height', 'color'],
-    //     },
-    //   },
-    // },
-    // Checkbox: {
-    //   statesAsClass: ['disabled', 'readonly'],
-    //   children: {
-    //     icon: {
-    //       include: ['color'],
-    //     },
-    //     element: {
-    //       include: ['color'],
-    //     }
-    //   }
-    // },
-    // CheckboxLabel: {
-    //   exclude: ['width', 'height'],
-    //   children: {
-    //     ignore: true,
-    //   }
-    // },
-    // CheckboxGroup: {
-    //   exclude: ['width', 'height'],
-    //   children: {
-    //     ignore: true,
-    //   },
-    // },
-    // HintedElement: {
-    //   exclude: ['width', 'height'],
-    //   children: {
-    //     ignore: true,
-    //   }
-    // },
-    // HelperText: {
-    //   exclude: ['width', 'height'],
-    // },
-    // Popover: {},
-    // FormBlock: {
-    //   exclude: ['width', 'height'],
-    //   children: {
-    //     title: {
-    //       exclude: ['width'],
-    //     },
-    //     content: {
-    //       exclude: ['width', 'height'],
-    //     },
-    //     row: {
-    //       ignore: true,
-    //     }
-    //   },
-    // },
-    // FormRow: {
-    //   children: {
-    //     HintedElement: {
-    //       ignore: true,
-    //     },
-    //     Input: {
-    //       ignore: true,
-    //     },
-    //   },
-    // },
-    Select: {
-      statesAsClass: ['disabled'],
-      children: {
-        MultiselectItem: {
-          ignore: true,
-        }
-      }
-    },
-    SelectDropdown: {
-      children: {
-        list: {
-          children: {
-            ignore: true,
-          },
-        },
-        input: {
-          ignore: true,
-        }
-      },
-    },
-    SelectItem: {},
-    // MultiselectItem: {},
-    // Modal: {
-    //   variables: {
-    //     gap: [''],
-    //   },
-    //   children: {
-    //     ignore: true,
-    //   },
-    // },
-    // ModalHeader: {},
-    // ModalFooter: {
-    //   children: {
-    //     ignore: true,
-    //   }
-    // },
-    // Toggle: {
-    //   statesAsClass: ['disabled'],
-    // },
-  },
-}
+// Config file
+let CONFIG;
 
 async function fetchFigma(path) {
   const response = await fetch(path, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'X-Figma-Token': FIGMA_TOKEN
-    }
+      "X-Figma-Token": CONFIG.files[0].token,
+    },
   });
 
   const data = await response.json();
@@ -205,9 +33,9 @@ async function fetchFigma(path) {
 }
 
 function getStylesPath(styles) {
-  const ids = Object.keys(styles).join(',');
+  const ids = Object.keys(styles).join(",");
 
-  return `https://api.figma.com/v1/files/${FIGMA_FILE}/nodes?ids=${ids}`;
+  return `https://api.figma.com/v1/files/${CONFIG.files[0].file}/nodes?ids=${ids}`;
 }
 
 async function getFiles(path) {
@@ -224,7 +52,7 @@ async function getFiles(path) {
   await fetchFigma(stylesPath)
     .then(data => {
       figmaStyles.styles = data;
-      createCssFile('styles', generateStylesFile(figmaStyles.styles));
+      createCssFile("styles", generateStylesFile(figmaStyles.styles));
     });
 
   // Parsing components
@@ -235,8 +63,28 @@ async function getFiles(path) {
     });
 }
 
+function getConfigFile() {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  return new Promise((resolve, reject) => {
+    glob(`${__dirname}/**/figma-to-scss.config.json`, {}, function (_, files) {
+
+      fs.readFile(files[0], 'utf8', (err, data) => {
+        if (err) {
+          reject(err);
+        }
+
+        resolve(data);
+      });
+    })
+  });
+
+
+}
+
 function generateStylesFile(data) {
-  let string = '';
+  let string = "";
 
   Object.values(data)
     .sort(function(a, b) {
@@ -247,15 +95,15 @@ function generateStylesFile(data) {
         const value = params.variables[0];
         string += `${value.name}: ${value.value};\n`;
       } else if (params.variables.length > 1) {
-        let props = '';
-        const postfix = !string.length ? '\n' : '';
+        let props = "";
+        const postfix = !string.length ? "\n" : "";
 
         if (string.length) {
-          string += '\n';
+          string += "\n";
         }
 
         params.variables.forEach((item, index) => {
-          const postfix = params.variables.length - 1 === index ? '' : '\n';
+          const postfix = params.variables.length - 1 === index ? "" : "\n";
           props += `  ${item.prop}: ${item.value};${postfix}`
         });
 
@@ -271,7 +119,7 @@ ${props}
 function collectComponents(data, componentSets = []) {
   if (data.children) {
     data.children.forEach(child => {
-      if (child.type === 'COMPONENT_SET') {
+      if (child.type === "COMPONENT_SET") {
         componentSets.push(child);
       } else if (child.children) {
         collectComponents(child, componentSets);
@@ -286,15 +134,15 @@ function collectChildren(variant, children, modifier, component) {
   variant.children
     .filter(child => !CONFIG.components[component]?.children || !CONFIG.components[component]?.children[child.name]?.ignore)
     .forEach(child => {
-      if (child.name !== 'text' && child.visible !== false) {
-        let childName = child.name.startsWith('$') ? child.name.split('-')[0].replace('$', 'iw-') : child.name;
+      if (child.name !== "text" && child.visible !== false) {
+        let childName = child.name.startsWith("$") ? child.name.split("-")[0].replace("$", "iw-") : child.name;
         const isHtmlElement = HTML_ELEMENTS.includes(childName);
-        let prefix = !isHtmlElement ? '.' : '';
+        let prefix = !isHtmlElement ? "." : "";
 
         // If child is an icon
-        if (child.type === 'VECTOR' || child.name.toUpperCase() === 'VECTOR') {
-          prefix = '';
-          childName = '';
+        if (child.type === "VECTOR" || child.name.toUpperCase() === "VECTOR") {
+          prefix = "";
+          childName = "";
         }
 
         let childModifier = modifier.length ? `${modifier} ${prefix}${childName}` : `${prefix}${childName}`;
@@ -335,8 +183,8 @@ function parseComponent(component) {
 }
 
 function generateVariable(data, prop, component) {
-  const modifierParts = data.modifier.split('.');
-  let variable = '';
+  const modifierParts = data.modifier.split(".");
+  let variable = "";
 
   data.variables[prop].forEach(item => {
     const part = modifierParts.find(i => i.startsWith(item.toLowerCase()));
@@ -378,7 +226,7 @@ function parse(props, component) {
           return (a.values[key] < b.values[key]) ? -1 : (a.values[key] > b.values[key]) ? 1 : 0;
         });
 
-      let modifier = '';
+      let modifier = "";
 
       let count = 0;
 
@@ -393,7 +241,7 @@ function parse(props, component) {
         const currentValue = item.values[key];
         const nextValue = sortedByProp[index + 1]?.values[key];
 
-        const root = item.element || item.component || '';
+        const root = item.element || item.component || "";
 
         // Optimize
         // Adding only not equal to default values
@@ -406,7 +254,7 @@ function parse(props, component) {
         // Root modifier
         // Setting host properties
         if (isRoot) {
-          modifier = '';
+          modifier = "";
           createModifierProp(result, { modifier, key, value: currentValue });
 
           return;
@@ -421,12 +269,12 @@ function parse(props, component) {
         if (currentValue !== nextValue) {
           // If property a same in all variants set value to default modifier
           // if (count === sortedByProp.length - 1) {
-          //   modifier = '';
+          //   modifier = "";
           // }
 
           createModifierProp(result, { modifier, key, value: currentValue });
 
-          modifier = '';
+          modifier = "";
           count = 0;
         } else {
           count += 1;
@@ -438,8 +286,10 @@ function parse(props, component) {
 }
 
 function createCssFile(component, content) {
-  const importStyles = '@import "./styles.scss";\n\n';
-  const result = component === 'styles' ? content : importStyles + content;
+  const importStyles = "@import './styles.scss';\n\n";
+  const result = component === "styles" ? content : importStyles + content;
+
+  createFolder();
 
   fs.writeFile(`./figma-parsed/${component.toLowerCase()}.scss`, result, function (err) {
     if (err) throw err;
@@ -447,23 +297,29 @@ function createCssFile(component, content) {
   });
 }
 
+function createFolder(dir = "./figma-parsed") {
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+}
+
 function getModifier(variantName, componentName) {
   const result = variantName
-    .split(', ')
-    .map(item => item.split('=').map(i => lowerCaseFirstLetter(i)))
-    .filter(([ , value ]) => value !== 'false')
+    .split(", ")
+    .map(item => item.split("=").map(i => lowerCaseFirstLetter(i)))
+    .filter(([ , value ]) => value !== "false")
     .map(([ key, value ]) => {
       const prefix = getPrefix(key, componentName);
 
-      return value === 'true' ? prefix + key : `${prefix}${key}-${value}`;
+      return value === "true" ? prefix + key : `${prefix}${key}-${value}`;
     })
-    .join('');
+    .join("");
 
-  return result.length ? `&${result}` : '';
+  return result.length ? `&${result}` : "";
 }
 
 function getPrefix(key, component) {
-  return STATES.includes(key) && !CONFIG?.components[component]?.statesAsClass?.includes(key) ? ':' : '.';
+  return STATES.includes(key) && !CONFIG?.components[component]?.statesAsClass?.includes(key) ? ":" : ".";
 }
 
 function filterByConfig(key, config) {
@@ -489,20 +345,20 @@ function collectBlockProperties(config, variant, parent) {
     .filter(key => filterByConfig(key, config))
     .forEach((css) => {
       const data = BASE_STYLES_MAP[css];
-      const iconInside = variant.children?.find(item => item.type === 'VECTOR' || item.name.toUpperCase() === 'VECTOR');
+      const iconInside = variant.children?.find(item => item.type === "VECTOR" || item.name.toUpperCase() === "VECTOR");
 
       let figmaValue = data.collector(variant, parent, variant.styles);
 
-      if (variant.type === 'VECTOR' && css === 'background') {
-        figmaValue = 'none';
+      if (variant.type === "VECTOR" && css === "background") {
+        figmaValue = "none";
       }
 
-      if (css === 'color' && iconInside) {
+      if (css === "color" && iconInside) {
         figmaValue = data.collector(iconInside);
       }
 
       if (figmaValue || figmaValue === 0) {
-        const units = data.units ? data.units : '';
+        const units = data.units ? data.units : "";
 
         values[css] = `${figmaValue}${units}`;
       }
@@ -519,7 +375,7 @@ function collectFontProperties(variant) {
       const figmaValue = data.collector(variant);
 
       if (figmaValue) {
-        const units = data.units ? data.units : '';
+        const units = data.units ? data.units : "";
 
         values[css] = `${figmaValue}${units}`;
       }
@@ -529,7 +385,7 @@ function collectFontProperties(variant) {
 }
 
 function collectProperties(variant, propsMap, modifier, component, child = null, parent) {
-  const childName = child?.replace('$', '');
+  const childName = child?.replace("$", "");
   const config = child && CONFIG.components[component]?.children ? CONFIG.components[component]?.children[childName] : CONFIG.components[component];
   const isHtmlElement = HTML_ELEMENTS.includes(child);
 
@@ -541,10 +397,10 @@ function collectProperties(variant, propsMap, modifier, component, child = null,
     variables: config?.variables ? config.variables : null,
   };
 
-  if (variant.type !== 'TEXT') {
+  if (variant.type !== "TEXT") {
     variantData.values = collectBlockProperties(config, variant, parent);
 
-    const textChild = variant.children?.find(item => item.type === 'TEXT' && item.name === 'text');
+    const textChild = variant.children?.find(item => item.type === "TEXT" && item.name === "text");
 
     // Add font properties if have text inside
     if (textChild) {
@@ -553,7 +409,7 @@ function collectProperties(variant, propsMap, modifier, component, child = null,
         const variableName = styleId ? figmaStyles.getStylesById(styleId).name : null;
 
         if (variableName !== null) {
-          variantData.values['mixin'] = figmaStyles.getStylesById(styleId).name;
+          variantData.values["mixin"] = figmaStyles.getStylesById(styleId).name;
         }
       } else {
         variantData.values = { ...variantData.values, ...collectFontProperties(textChild)};
@@ -566,7 +422,7 @@ function collectProperties(variant, propsMap, modifier, component, child = null,
     const textStyles = styleId ? figmaStyles.getStylesById(styleId) : null;
 
     if (textStyles !== null) {
-      variantData.values['mixin'] = figmaStyles.getStylesById(styleId).name;
+      variantData.values["mixin"] = figmaStyles.getStylesById(styleId).name;
     } else {
       variantData.values = collectFontProperties(variant);
     }
@@ -579,62 +435,55 @@ function collectProperties(variant, propsMap, modifier, component, child = null,
   }
 }
 
-// Getting all
-getFiles(`https://api.figma.com/v1/files/${FIGMA_FILE}`);
-
-function createFontMixin() {
-
-}
-
 function createMixin(data, component) {
-  let result = '';
-  let baseStyles = '';
-  let variables = '';
+  let result = "";
+  let baseStyles = "";
+  let variables = "";
 
   Object.keys(data).forEach(key => {
     // TODO another key for icons
-    if (key.startsWith('$')) {
+    if (key.startsWith("$")) {
       variables += `${key}: ${data[key]};\n`;
 
       return;
     }
 
-    let props = '';
+    let props = "";
     const propData = Object.entries(data[key]);
 
     propData.forEach(([prop, value], index) => {
-      const postfix = propData.length !== index + 1 ? '\n' : '';
-      const spaces = key === '' ? '  ' : '    ';
-      let result = '';
+      const postfix = propData.length !== index + 1 ? "\n" : "";
+      const spaces = key === "" ? "  " : "    ";
+      let result = "";
 
-      if (prop === 'mixin') {
+      if (prop === "mixin") {
         result = `${spaces}@include ${value};${postfix}`;
       } else {
         result = `${spaces}${prop}: ${value};${postfix}`;
       }
 
 
-      if (key === '') {
+      if (key === "") {
         baseStyles += result;
       } else {
         props += result;
       }
     });
 
-    const keyParts = key.split(',');
-    let keyString = '';
+    const keyParts = key.split(",");
+    let keyString = "";
 
     keyParts.forEach((part, index) => {
-      const spaces = '  ';
+      const spaces = "  ";
 
-      part = part.startsWith('iw-') ? `.${part}` : part;
+      part = part.startsWith("iw-") ? `.${part}` : part;
 
 
       keyString += keyParts.length !== index + 1 ? `${spaces}${part},\n` : `${spaces}${part}`;
     });
 
 
-    if (key !== '') {
+    if (key !== "") {
     result += `
 ${keyString} {
 ${props}
@@ -653,3 +502,11 @@ ${result}
 function lowerCaseFirstLetter(string) {
   return string.charAt(0).toLowerCase() + string.slice(1);
 }
+
+// Running script
+await getConfigFile()
+  .then(data => {
+    CONFIG = JSON.parse(data);
+  })
+// Getting all
+getFiles(`https://api.figma.com/v1/files/${CONFIG.files[0].file}`);

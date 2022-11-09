@@ -78,7 +78,7 @@ export function collectBorderColor(variant) {
 
 export function collectBorderStyle(variant) {
   if (!variant.strokes.length) {
-    return 'transparent';
+    return 'none';
   }
 
   return variant.strokes[0].type.toLowerCase();
